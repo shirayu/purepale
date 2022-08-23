@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "purepale"
+version = "0.1.0"
+description = ""
+authors = ["Yuta Hayashibe <yuta@hayashibe.jp>"]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+diffusers = "^0.2.4"
+transformers = "^4.21.1"
+scipy = "^1.9.0"
+torch = { file = "wheels/torch-1.12.1+cu116-cp310-cp310-linux_x86_64.whl" }
+uvicorn = "^0.18.2"
+fastapi = "^0.79.1"
+pydantic = "^1.9.2"
+
+[tool.poetry.dev-dependencies]
+coverage = ">=5.3"
+flake8 = ">=3.8.4"
+isort = ">=5.6.4"
+yamllint = ">=1.25.0"
+pydocstyle = ">=5.1.1"
+black = ">=21.9b0"
+toml = "^0.10.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
