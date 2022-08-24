@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
 import argparse
+import random
 import uuid
 from pathlib import Path
 
+import numpy as np
 import torch
 import uvicorn
 from diffusers import StableDiffusionPipeline
@@ -11,7 +13,16 @@ from fastapi import FastAPI, status
 from fastapi.staticfiles import StaticFiles
 from torch.amp.autocast_mode import autocast
 
-from purepale.schema import WebRequest, WebResponse
+from purepale.schema import Info, Parameters, WebRequest, WebResponse
+
+
+def torch_fix_seed(seed: int):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.use_deterministic_algorithms = True
 
 
 def get_app(opts):
@@ -20,12 +31,13 @@ def get_app(opts):
     model_id = "CompVis/stable-diffusion-v1-4"
     print(f"Loading... {model_id}")
 
-    pipe = StableDiffusionPipeline.from_pretrained(
+    device: str = "cuda" if torch.cuda.is_available() else "cpu"
+    model = StableDiffusionPipeline.from_pretrained(
         model_id,
         revision="fp16",
         torch_dtype=torch.float16,
         use_auth_token=True,
-    ).to("cuda")
+    ).to(device)
 
     app = FastAPI()
     app.mount("/images", StaticFiles(directory=str(path_out)), name="images")
@@ -33,13 +45,27 @@ def get_app(opts):
     @app.post("/api/generate", response_model=WebResponse)
     def api_generate(request: WebRequest):
         with torch.no_grad():
-            with autocast("cuda"):
-                image = pipe(request.prompt)["sample"][0]
+            with autocast(device):
+                image = model(
+                    request.prompt,
+                    height=request.parameters.height,
+                    width=request.parameters.width,
+                    num_inference_steps=request.parameters.num_inference_steps,
+                    guidance_scale=request.parameters.guidance_scale,
+                    eta=request.parameters.eta,
+                )["sample"][0]
                 name = str(uuid.uuid4())
                 path_outfile: Path = path_out.joinpath(f"{name}.png")
                 image.save(path_outfile)
         return WebResponse(
             path=f"images/{path_outfile.name}",
+        )
+
+    @app.get("/api/info", response_model=Info)
+    def api_info():
+        dp = Parameters()
+        return Info(
+            default_parameters=dp,
         )
 
     app.mount(
@@ -80,11 +106,18 @@ def get_opts() -> argparse.Namespace:
         "--root_path",
         default="",
     )
+
+    oparser.add_argument(
+        "--seed",
+        type=int,
+        default=42,
+    )
     return oparser.parse_args()
 
 
 def main() -> None:
     opts = get_opts()
+    torch_fix_seed(opts.seed)
     app = get_app(opts)
     uvicorn.run(
         app,  # type: ignore

@@ -18,15 +18,41 @@
             <h1 id="title" itemprop="name">Purepale</h1>
         </div>
 
-        <div>
-            <label for="prompt" class="form-label">Prompt</label>
-            <input class="form-control" id="prompt" aria-describedby="prompt" @keydown.enter="trigger">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <label for="input_prompt" class="form-label">Prompt</label>
+                    <input class="form-control" id="input_prompt" @keydown.enter="trigger">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label for="input_height" class="form-label">Height</label>
+                    <input class="form-control" id="input_height" type="number" step="8">
+                </div>
+                <div class="col">
+                    <label for="input_width" class="form-label">Width</label>
+                    <input class="form-control" id="input_width" type="number" step="8">
+                </div>
+                <div class="col">
+                    <label for="input_num_inference_steps" class="form-label">Steps</label>
+                    <input class="form-control" id="input_num_inference_steps" type="number">
+                </div>
+                <div class="col">
+                    <label for="input_guidance_scale" class="form-label">Guidance Scale</label>
+                    <input class="form-control" id="input_guidance_scale" type="number" step="0.1">
+                </div>
+                <div class="col">
+                    <label for="input_eta" class="form-label">Eta</label>
+                    <input class="form-control" id="input_eta" type="number" step="0.1">
+                </div>
+            </div>
         </div>
 
         <div class="container">
             <div v-for="result in results" :key="result.path" class="row">
                 <div class="col">
-                    {{result.prompt}}
+                    {{result.query.prompt}}
                 </div>
                 <div class="col">
                     <img :src="result.path">
