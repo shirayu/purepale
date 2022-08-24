@@ -58,10 +58,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
             return response.json();
           })
           .then((data) => {
-            console.log(data);
             if (data.path !== undefined) {
               this.results[0].path = data.path;
             } else {
+              dom_in.value = this.results[0].query.prompt;
               this.results[0].query.prompt += `: ${data.detail}`;
             }
             this.results.splice();
