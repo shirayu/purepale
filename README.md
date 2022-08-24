@@ -13,7 +13,7 @@ poetry install --no-dev
 ## Run
 
 ```bash
-poetry run python -m purepale.serve -o /dev/shm/IMG --port 8000
+poetry run python -m purepale.serve -o ~/IMG --port 8000
 ```
 
 ## Documents
