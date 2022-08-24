@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     el: "#app",
     data: {
       results: [],
+      finished: true,
     },
     methods: {
       trigger: async function (event) {
@@ -47,6 +48,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
           query: query,
           path: "loading.gif",
         });
+        this.finished = false;
 
         await fetch("/api/generate", {
           method: "POST",
@@ -68,6 +70,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
               dom_in.value = this.results[0].query.prompt;
               this.results[0].query.prompt += `: ${data.detail}`;
             }
+            this.finished = true;
             this.results.splice();
             dom_in.disabled = false;
           })

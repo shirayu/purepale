@@ -55,7 +55,9 @@
                     <div>
                         {{result.query.prompt}}
                     </div>
-                    <input type="button" value="♲" @click="trigger_retry" :data-index="index">
+                    <div v-if="finished">
+                        <input type="button" value="♲" @click="trigger_retry" :data-index="index">
+                    </div>
                 </div>
                 <div class="col">
                     <img :src="result.path">
