@@ -50,17 +50,16 @@
         </div>
 
         <div class="container">
-            <div v-for="(result, index) in results" :key="result.path" class="row">
-                <div class="col">
-                    <div>
-                        {{result.query.prompt}}
-                    </div>
+            <div v-for="(result, index) in results" :key="result.path">
+
+                <div>
+                    <img :src="result.path" class="img-fluid">
+                </div>
+                <div>
+                    {{result.query.prompt}}
                     <div v-if="finished">
                         <input type="button" value="♲" @click="trigger_retry" :data-index="index">
                     </div>
-                </div>
-                <div class="col">
-                    <img :src="result.path">
                 </div>
             </div>
         </div>
