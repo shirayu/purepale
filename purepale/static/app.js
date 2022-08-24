@@ -35,7 +35,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
         if (event.keyCode !== 13) {
           return;
         }
+        this.action();
+      },
+      action: async function () {
         const dom_in = document.getElementById("input_prompt");
+
         const query = get_query();
         dom_in.value = "";
         dom_in.disabled = true;
@@ -71,6 +75,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
             console.log(error);
           });
       },
+      trigger_retry: async function (event) {
+        const p = this.results[event.target.dataset.index].query.prompt;
+        const dom_in = document.getElementById("input_prompt");
+        dom_in.value = p;
+        this.action();
+      },
     },
   });
 
@@ -80,7 +90,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
       if (!response.ok) {
         console.log("error!");
       }
-      console.log("ok!");
       return response.json();
     })
     .then((data) => {

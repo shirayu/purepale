@@ -50,9 +50,12 @@
         </div>
 
         <div class="container">
-            <div v-for="result in results" :key="result.path" class="row">
+            <div v-for="(result, index) in results" :key="result.path" class="row">
                 <div class="col">
-                    {{result.query.prompt}}
+                    <div>
+                        {{result.query.prompt}}
+                    </div>
+                    <input type="button" value="♲" @click="trigger_retry" :data-index="index">
                 </div>
                 <div class="col">
                     <img :src="result.path">
