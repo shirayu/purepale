@@ -1,5 +1,4 @@
 function set_default_parameters(dparams) {
-  console.log(dparams);
   for (const key in dparams) {
     const dom_in = document.getElementById(`input_${key}`);
     dom_in.value = dparams[key];
@@ -54,16 +53,17 @@ document.addEventListener("DOMContentLoaded", (event) => {
         })
           .then((response) => {
             if (!response.ok) {
-              console.log("error!");
+              this.results[0].path = "/error.png";
             }
-            console.log("ok!");
             return response.json();
           })
           .then((data) => {
-            this.results[0] = {
-              query: query,
-              path: data.path,
-            };
+            console.log(data);
+            if (data.path !== undefined) {
+              this.results[0].path = data.path;
+            } else {
+              this.results[0].query.prompt += `: ${data.detail}`;
+            }
             this.results.splice();
             dom_in.disabled = false;
           })

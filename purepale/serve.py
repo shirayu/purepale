@@ -7,10 +7,12 @@ from pathlib import Path
 
 import numpy as np
 import torch
+import torch.backends.cudnn
 import uvicorn
 from diffusers import StableDiffusionPipeline
-from fastapi import FastAPI, status
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from starlette.exceptions import HTTPException
 from torch.amp.autocast_mode import autocast
 
 from purepale.schema import Info, Parameters, WebRequest, WebResponse
@@ -46,14 +48,21 @@ def get_app(opts):
     def api_generate(request: WebRequest):
         with torch.no_grad():
             with autocast(device):
-                image = model(
-                    request.prompt,
-                    height=request.parameters.height,
-                    width=request.parameters.width,
-                    num_inference_steps=request.parameters.num_inference_steps,
-                    guidance_scale=request.parameters.guidance_scale,
-                    eta=request.parameters.eta,
-                )["sample"][0]
+                try:
+                    image = model(
+                        request.prompt,
+                        height=request.parameters.height,
+                        width=request.parameters.width,
+                        num_inference_steps=request.parameters.num_inference_steps,
+                        guidance_scale=request.parameters.guidance_scale,
+                        eta=request.parameters.eta,
+                    )["sample"][0]
+                except Exception as e:
+                    raise HTTPException(
+                        status_code=400,
+                        detail="".join(e.args),
+                    )
+
                 name = str(uuid.uuid4())
                 path_outfile: Path = path_out.joinpath(f"{name}.png")
                 image.save(path_outfile)
