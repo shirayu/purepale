@@ -110,14 +110,14 @@ def get_opts() -> argparse.Namespace:
     oparser.add_argument(
         "--seed",
         type=int,
-        default=42,
     )
     return oparser.parse_args()
 
 
 def main() -> None:
     opts = get_opts()
-    torch_fix_seed(opts.seed)
+    if opts.seed is not None:
+        torch_fix_seed(opts.seed)
     app = get_app(opts)
     uvicorn.run(
         app,  # type: ignore
