@@ -16,6 +16,10 @@ poetry install --no-dev
 poetry run python -m purepale.serve -o /dev/shm/IMG --port 8000
 ```
 
+## Documents
+
+- [Tips to run on WSL2](docs/wsl2.md)
+
 ## License
 
 Apache License 2.0
