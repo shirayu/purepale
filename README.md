@@ -1,5 +1,5 @@
 
-# Purepale
+# 🎨 Purepale
 
 A simple web interface of image generations
 
