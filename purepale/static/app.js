@@ -57,7 +57,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
         const dom_in = document.getElementById("input_prompt");
 
         const query = get_query();
-        dom_in.value = "";
         disable_input(true);
         this.results.unshift({
           query: query,
