@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     data: {
       results: [],
       finished: true,
+      contorol_loop: false,
     },
     methods: {
       trigger: async function (event) {
@@ -64,15 +65,20 @@ document.addEventListener("DOMContentLoaded", (event) => {
             return response.json();
           })
           .then((data) => {
+            this.finished = true;
+            this.results.splice();
+            dom_in.disabled = false;
+
             if (data.path !== undefined) {
               this.results[0].path = data.path;
+              if (this.contorol_loop) {
+                document.getElementById("input_prompt").value = query.prompt;
+                this.action();
+              }
             } else {
               dom_in.value = this.results[0].query.prompt;
               this.results[0].query.prompt += `: ${data.detail}`;
             }
-            this.finished = true;
-            this.results.splice();
-            dom_in.disabled = false;
           })
           .catch((error) => {
             console.log(error);
