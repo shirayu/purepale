@@ -51,37 +51,26 @@ document.addEventListener("DOMContentLoaded", (event) => {
         });
         this.finished = false;
 
-        await fetch("/api/generate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(query),
-        })
+        await axios
+          .post("/api/generate", query)
           .then((response) => {
-            if (!response.ok) {
-              this.results[0].path = "/error.png";
-            }
-            return response.json();
-          })
-          .then((data) => {
-            this.finished = true;
-            this.results.splice();
-            dom_in.disabled = false;
-
-            if (data.path !== undefined) {
-              this.results[0].path = data.path;
-              if (this.contorol_loop) {
-                document.getElementById("input_prompt").value = query.prompt;
-                this.action();
-              }
-            } else {
-              dom_in.value = this.results[0].query.prompt;
-              this.results[0].query.prompt += `: ${data.detail}`;
+            const data = response.data;
+            this.results[0].path = data.path;
+            if (this.contorol_loop) {
+              document.getElementById("input_prompt").value = query.prompt;
+              this.action();
             }
           })
           .catch((error) => {
+            this.results[0].path = "/error.png";
+            dom_in.value = this.results[0].query.prompt;
+            this.results[0].error = error.response.data.detail;
             console.log(error);
+          })
+          .finally(() => {
+            this.finished = true;
+            this.results.splice();
+            dom_in.disabled = false;
           });
       },
       trigger_retry: async function (event) {
@@ -94,17 +83,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
   });
 
   //set default
-  fetch("/api/info")
+  axios
+    .get("/api/info")
     .then((response) => {
-      if (!response.ok) {
-        console.log("error!");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      set_default_parameters(data["default_parameters"]);
+      set_default_parameters(response.data["default_parameters"]);
     })
     .catch((error) => {
-      console.log(error);
+      alert(`Error: ${error.message}`);
+      console.log(error.message);
     });
 });
