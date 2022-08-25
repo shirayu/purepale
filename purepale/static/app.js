@@ -70,10 +70,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
           .then((response) => {
             const data = response.data;
             this.results[0].path = data.path;
-            if (this.contorol_loop) {
-              document.getElementById("input_prompt").value = query.prompt;
-              this.action();
-            }
           })
           .catch((error) => {
             this.results[0].path = "/error.png";
@@ -85,6 +81,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
             this.finished = true;
             this.results.splice();
             disable_input(false);
+            if (this.results[0].error === undefined && this.contorol_loop) {
+              document.getElementById("input_prompt").value = query.prompt;
+              this.action();
+            }
           });
       },
       trigger_retry: async function (event) {
