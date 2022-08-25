@@ -24,6 +24,20 @@ function get_query() {
   return q;
 }
 
+function disable_input(st) {
+  const inputs = document.getElementsByTagName("input");
+  for (const inp of inputs) {
+    if (inp.id == "control_loop") {
+      continue;
+    }
+    inp.disabled = st;
+  }
+  const buttons = document.getElementsByTagName("button");
+  for (const inp of buttons) {
+    inp.disabled = st;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", (event) => {
   new Vue({
     el: "#app",
@@ -44,7 +58,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
         const query = get_query();
         dom_in.value = "";
-        dom_in.disabled = true;
+        disable_input(true);
         this.results.unshift({
           query: query,
           path: "loading.gif",
@@ -70,7 +84,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
           .finally(() => {
             this.finished = true;
             this.results.splice();
-            dom_in.disabled = false;
+            disable_input(false);
           });
       },
       trigger_retry: async function (event) {
