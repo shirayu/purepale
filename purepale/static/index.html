@@ -55,8 +55,8 @@
             </div>
         </div>
 
-        <div class="container">
-            <div v-for="(result, index) in results" :key="result.path">
+        <div>
+            <div v-for="(result, index) in results" :key="result.path" class="m-1" style="float:left; min-width:216px;">
 
                 <div>
                     <img :src="result.path" class="img-fluid">
