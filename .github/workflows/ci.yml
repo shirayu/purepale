@@ -28,7 +28,7 @@ jobs:
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
 
       - run: pip install poetry
-      - run: sed -i 's|{ file = "wheels/torch-|"\^|; s|+cu.*$|"| ' pyproject.toml && poetry install
+      - run: sed -i 's|{ file = "wheels/torch-|"\^|; s|+cu.*$|"| ' pyproject.toml && poetry update torch && poetry install
 
       - uses: actions/setup-node@v3
         with:
