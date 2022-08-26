@@ -107,6 +107,7 @@ def get_app(opts):
                         init_image = init_image.resize((request.parameters.height, request.parameters.width))
                         init_image = preprocess(init_image)
                         kwargs["init_image"] = init_image
+                        kwargs["strength"] = request.parameters.strength
                     else:
                         kwargs["height"] = request.parameters.height
                         kwargs["width"] = request.parameters.width
