@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js" integrity="sha384-t1tHLsbM7bYMJCXlhr0//00jSs7ZhsAhxgm191xFsyzvieTMCbUWKMhFg9I6ci8q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios@0.27.1/dist/axios.min.js" integrity="sha256-maFJaLqGCR09LmHMGRFqC++MMfQGU+K+CUC3U2NBB/M=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" integrity="sha384-xeJqLiuOvjUBq3iGOjvSQSIlwrpqjSHXpduPd6rQpuiM3f5/ijby8pCsnbu5S81n" crossorigin="anonymous">
     <script src="app.js"></script>
 </head>
 
@@ -113,7 +114,9 @@
                             {{result.error}}
                         </div>
                         <div v-if="finished">
-                            <input type="button" value="♲" @click="trigger_retry" :data-index="row_idx * 4 + col_idx">
+                            <button class="btn btn-secondary" @click="trigger_retry" :data-index="(row_idx -1)* 4 + col_idx">
+                                <span class="bi bi-recycle" :data-index="(row_idx -1)* 4 + col_idx"></span>
+                            </button>
                         </div>
                     </div>
                 </div>
