@@ -93,6 +93,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
           });
       },
       trigger_retry: async function (event) {
+        if (event.target.dataset.replace == "yes") {
+          this.path_initial_image =
+            this.results[event.target.dataset.index].path;
+          return;
+        }
         const p = this.results[event.target.dataset.index].query.prompt;
         const dom_in = document.getElementById("input_prompt");
         dom_in.value = p;
