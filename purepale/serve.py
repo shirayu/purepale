@@ -13,7 +13,7 @@ import PIL.Image
 import torch
 import torch.backends.cudnn
 import uvicorn
-from diffusers import StableDiffusionPipeline, modeling_utils
+from diffusers import StableDiffusionPipeline
 from fastapi import FastAPI, UploadFile
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException
