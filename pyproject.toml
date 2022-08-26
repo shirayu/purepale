@@ -13,6 +13,7 @@ torch = { file = "wheels/torch-1.12.1+cu116-cp310-cp310-linux_x86_64.whl" }
 uvicorn = "^0.18.2"
 fastapi = "^0.79.1"
 pydantic = "^1.9.2"
+ftfy = "^6.1.1"
 
 [tool.poetry.dev-dependencies]
 coverage = ">=5.3"
