@@ -30,7 +30,11 @@
                     </div>
                 </div>
                 <div class="col-2">
-                    <button id="button_run" type="button" class="btn btn-primary" v-on:click="action()">Run</button>
+                    <div class="form-check">
+                        <input class="form-check-input" id="control_loop" type="checkbox" v-model="contorol_loop">
+                        <label class="form-check-label" for="control_loop">Loop</label>
+                        <button id="button_run" type="button" class="btn btn-primary" v-on:click="action()">Run</button>
+                    </div>
                 </div>
             </div>
             <div class="mb-3 row">
@@ -65,9 +69,25 @@
                     </div>
                 </div>
                 <div class="col">
-                    <div class="form-check">
-                        <input class="form-check-input" id="control_loop" type="checkbox" v-model="contorol_loop">
-                        <label class="form-check-label" for="control_loop">Loop</label>
+                    <div class="input-group">
+                        <span class="input-group-text">Strength</span>
+                        <input class="form-control" id="input_strength" type="number" step="0.1" @keydown.enter="trigger">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col">
+                    <div class="input-group">
+                        <label class="input-group-btn">
+                            <span class="btn btn-primary">
+                                Initial image<input type="file" style="display:none" class="uploadFile" id="file_input_initial_image">
+                            </span>
+                            <button id="button_ii_clear" type="button" class="btn btn-primary" v-on:click="clear_path_initial_image()">Clear</button>
+
+                            <img :src="path_initial_image" id="img_init_image_preview" alt="Initial image" style="height:250px;" v-if="path_initial_image">
+                        </label>
                     </div>
                 </div>
 

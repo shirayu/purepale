@@ -5,10 +5,11 @@ function set_default_parameters(dparams) {
   }
 }
 
-function get_query() {
+function get_query(vue) {
   const q = {
     parameters: {},
     prompt: "",
+    path_initial_image: vue.path_initial_image,
   };
 
   const inputs = document.getElementsByTagName("input");
@@ -39,14 +40,19 @@ function disable_input(st) {
 }
 
 document.addEventListener("DOMContentLoaded", (event) => {
-  new Vue({
+  const vue = new Vue({
     el: "#app",
     data: {
       results: [],
       finished: true,
       contorol_loop: false,
+      path_initial_image: null,
     },
     methods: {
+      clear_path_initial_image: function () {
+        this.path_initial_image = null;
+        document.getElementById("file_input_initial_image").value = "";
+      },
       trigger: async function (event) {
         if (event.keyCode !== 13) {
           return;
@@ -56,7 +62,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
       action: async function () {
         const dom_in = document.getElementById("input_prompt");
 
-        const query = get_query();
+        const query = get_query(this);
         disable_input(true);
         this.results.unshift({
           query: query,
@@ -105,4 +111,23 @@ document.addEventListener("DOMContentLoaded", (event) => {
       alert(`Error: ${error.message}`);
       console.log(error.message);
     });
+
+  const file_input = document.getElementById("file_input_initial_image");
+  file_input.addEventListener("change", (event) => {
+    if (file_input.files[0]) {
+      const formData = new FormData();
+      formData.append("file", file_input.files[0]);
+      const request = new Request("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      fetch(request)
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          vue.path_initial_image = data.path;
+        });
+    }
+  });
 });
