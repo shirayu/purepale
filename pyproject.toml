@@ -32,7 +32,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.pyright]
 pythonVersion = "3.8"
 typeCheckingMode = "basic"
-exclude = ["**/third", ".venv", "**/node_modules", "**/__pycache__",]
+exclude = ["**/third_party", ".venv", "**/node_modules", "**/__pycache__",]
 reportPrivateImportUsage = "information"
 reportUnusedVariable="warning"
 
