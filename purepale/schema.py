@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
-from typing import Optional
+from typing import Any, Optional
 
-from PIL.Image import Image
 from pydantic import BaseModel
 
 
@@ -19,8 +18,8 @@ class Parameters(BaseModel):
 
 class PipesRequest(BaseModel):
     prompt: str
-    initial_image: Optional[Image] = None
-    initial_image_mask: Optional[Image] = None
+    initial_image: Optional[Any] = None
+    initial_image_mask: Optional[Any] = None
     parameters: Parameters
 
 
