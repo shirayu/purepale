@@ -8,7 +8,6 @@ function set_default_parameters(dparams) {
 function get_query(vue) {
   const q = {
     parameters: {},
-    prompt: "",
     path_initial_image: vue.path_initial_image,
     initial_image_masks: vue.initial_image_masks,
   };
@@ -16,9 +15,7 @@ function get_query(vue) {
   const inputs = document.getElementsByTagName("input");
   for (const inp of inputs) {
     const k = inp.id.replace("input_", "");
-    if (k == "prompt") {
-      q.prompt = inp.value;
-    } else if (k == "seed") {
+    if (k == "seed") {
       if (inp.value.trim().length == 0) {
         q.parameters[k] = null;
       } else {
@@ -76,22 +73,19 @@ document.addEventListener("DOMContentLoaded", (event) => {
         const dom_in = document.getElementById("input_prompt");
 
         const query = get_query(this);
+        query.path = "loading.gif";
         disable_input(true);
-        this.results.unshift({
-          query: query,
-          path: "loading.gif",
-        });
+        this.results.unshift(query);
         this.finished = false;
 
         await axios
           .post("/api/generate", query)
           .then((response) => {
-            const data = response.data;
-            this.results[0].path = data.path;
+            this.results[0] = response.data;
           })
           .catch((error) => {
             this.results[0].path = "/error.png";
-            dom_in.value = this.results[0].query.prompt;
+            dom_in.value = this.results[0].parameters.prompt;
             this.results[0].error = error.response.data.detail;
             console.log(error);
           })
@@ -100,7 +94,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
             this.results.splice();
             disable_input(false);
             if (this.results[0].error === undefined && this.contorol_repeat) {
-              document.getElementById("input_prompt").value = query.prompt;
+              document.getElementById("input_prompt").value =
+                query.parameters.prompt;
               this.action();
             }
           });
@@ -111,7 +106,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
             this.results[event.target.dataset.index].path;
           return;
         }
-        const p = this.results[event.target.dataset.index].query.prompt;
+        const p =
+          this.results[event.target.dataset.index].query.parameters.prompt;
         const dom_in = document.getElementById("input_prompt");
         dom_in.value = p;
         this.action();

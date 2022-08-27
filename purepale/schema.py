@@ -8,6 +8,7 @@ from pydantic import BaseModel, validator
 class Parameters(BaseModel):
     # Parameters for LDMTextToImagePipeline
     # diffusers/pipelines/stable_diffusion/pipeline_stable_diffusion.py
+    prompt: str = ""
     height: int = 512
     width: int = 512
     num_inference_steps: int = 50
@@ -25,14 +26,12 @@ class ImageMask(BaseModel):
 
 
 class PipesRequest(BaseModel):
-    prompt: str
     initial_image: Optional[Any] = None
     initial_image_mask: Optional[Any] = None
     parameters: Parameters
 
 
 class WebRequest(BaseModel):
-    prompt: str
     path_initial_image: Optional[str] = None
     initial_image_masks: Optional[List[ImageMask]] = None
     parameters: Parameters = Parameters()

@@ -97,7 +97,7 @@ class Pipes:
         with torch.no_grad():
             with autocast(self.device):
                 image = model(
-                    request.prompt,
+                    request.parameters.prompt,
                     num_inference_steps=request.parameters.num_inference_steps,
                     guidance_scale=request.parameters.guidance_scale,
                     eta=request.parameters.eta,
@@ -164,7 +164,6 @@ def get_app(opts):
 
             image = pipes.generate(
                 request=PipesRequest(
-                    prompt=request.prompt,
                     initial_image=init_image,
                     initial_image_mask=mask_img,
                     parameters=request.parameters,
