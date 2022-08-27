@@ -75,11 +75,8 @@ class Pipes:
         model = self.pipe_txt2img
         if request.initial_image_mask is not None:
             model = self.pipe_masked_img2img
-            init_image_tensor = preprocess(request.initial_image)
-            init_image_mask_tensor = preprocess(request.initial_image_mask)
-
-            kwargs["init_image"] = init_image_tensor
-            kwargs["mask_image"] = init_image_mask_tensor
+            kwargs["init_image"] = request.initial_image  # no preprocess
+            kwargs["mask_image"] = request.initial_image_mask
             kwargs["strength"] = request.parameters.strength
         elif request.initial_image is not None:
             model = self.pipe_img2img
