@@ -44,33 +44,45 @@ def torch_fix_seed(seed: int):
     torch.use_deterministic_algorithms = True
 
 
+class Pipes:
+    def __init__(
+        self,
+        *,
+        model_id: str,
+        device: str,
+    ):
+        print(f"Loading... {model_id}")
+        self.pipe_txt2img = StableDiffusionPipeline.from_pretrained(
+            model_id,
+            revision="fp16",
+            torch_dtype=torch.float16,
+            use_auth_token=True,
+        ).to(device)
+
+        self.pipe_img2img = StableDiffusionImg2ImgPipeline.from_pretrained(
+            model_id,
+            revision="fp16",
+            torch_dtype=torch.float16,
+            use_auth_token=True,
+            # Re-use
+            vae=self.pipe_txt2img.vae,
+            text_encoder=self.pipe_txt2img.text_encoder,
+            tokenizer=self.pipe_txt2img.tokenizer,
+            unet=self.pipe_txt2img.unet,
+            scheduler=self.pipe_txt2img.scheduler,
+            feature_extractor=self.pipe_txt2img.feature_extractor,
+        ).to("cuda")
+
+
 def get_app(opts):
     path_out: Path = opts.output
     path_out.mkdir(exist_ok=True, parents=True)
-    model_id = "CompVis/stable-diffusion-v1-4"
-    print(f"Loading... {model_id}")
 
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
-    pipe_txt2img = StableDiffusionPipeline.from_pretrained(
-        model_id,
-        revision="fp16",
-        torch_dtype=torch.float16,
-        use_auth_token=True,
-    ).to(device)
-
-    pipe_img2img = StableDiffusionImg2ImgPipeline.from_pretrained(
-        model_id,
-        revision="fp16",
-        torch_dtype=torch.float16,
-        use_auth_token=True,
-        # Re-use
-        vae=pipe_txt2img.vae,
-        text_encoder=pipe_txt2img.text_encoder,
-        tokenizer=pipe_txt2img.tokenizer,
-        unet=pipe_txt2img.unet,
-        scheduler=pipe_txt2img.scheduler,
-        feature_extractor=pipe_txt2img.feature_extractor,
-    ).to("cuda")
+    pipes = Pipes(
+        model_id=opts.model,
+        device=device,
+    )
 
     app = FastAPI()
     app.mount("/images", StaticFiles(directory=str(path_out)), name="images")
@@ -91,7 +103,7 @@ def get_app(opts):
             with autocast(device):
                 try:
                     kwargs = {}
-                    model = pipe_txt2img
+                    model = pipes.pipe_txt2img
                     if request.path_initial_image:
                         path_ii = path_out.joinpath(Path(request.path_initial_image).name)
                         if not path_ii.exists():
@@ -100,7 +112,7 @@ def get_app(opts):
                                 detail="File does not exist",
                             )
 
-                        model = pipe_img2img
+                        model = pipes.pipe_img2img
                         init_image = None
                         with path_ii.open("rb") as imgf:
                             init_image = PIL.Image.open(BytesIO(imgf.read())).convert("RGB")
