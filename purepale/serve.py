@@ -81,7 +81,7 @@ class Pipes:
             kwargs["init_image"] = init_image_tensor
             kwargs["mask_image"] = init_image_mask_tensor
             kwargs["strength"] = request.parameters.strength
-        if request.initial_image is not None:
+        elif request.initial_image is not None:
             model = self.pipe_img2img
             init_image_tensor = preprocess(request.initial_image)
             kwargs["init_image"] = init_image_tensor
@@ -145,12 +145,12 @@ def get_app(opts):
                 path_ii: Optional[Path] = None
                 # TODO: Make StableDiffusionInpaintingPipeline accept mask info directly
                 assert orig_img_size is not None
-                mask_img = PIL.Image.new("L", orig_img_size)
+                mask_img = PIL.Image.new("RGB", orig_img_size, (0, 0, 0))
                 draw = PIL.ImageDraw.Draw(mask_img)
                 for mask in request.initial_image_masks:
                     draw.rectangle(
                         (mask.a_x, mask.a_y, mask.b_x, mask.b_y),
-                        fill=255,
+                        fill=(255, 255, 255),
                     )
                 mask_img = mask_img.resize((request.parameters.height, request.parameters.width))
 
