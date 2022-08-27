@@ -19,6 +19,7 @@ class Parameters(BaseModel):
 class WebRequest(BaseModel):
     prompt: str
     path_initial_image: Optional[str] = None
+    path_initial_image_mask: Optional[str] = None
     parameters: Parameters = Parameters()
 
 

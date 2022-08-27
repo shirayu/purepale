@@ -20,6 +20,7 @@ from torch.amp.autocast_mode import autocast
 
 from purepale.schema import Info, Parameters, WebRequest, WebResponse
 from purepale.third_party.image_to_image import StableDiffusionImg2ImgPipeline, preprocess
+from purepale.third_party.inpainting import StableDiffusionInpaintingPipeline
 
 
 class Pipes:
@@ -49,7 +50,18 @@ class Pipes:
             unet=self.pipe_txt2img.unet,
             scheduler=self.pipe_txt2img.scheduler,
             feature_extractor=self.pipe_txt2img.feature_extractor,
-        ).to("cuda")
+        ).to(device)
+
+        self.pipe_masked_img2img = StableDiffusionInpaintingPipeline(
+            # Re-use
+            vae=self.pipe_txt2img.vae,
+            text_encoder=self.pipe_txt2img.text_encoder,
+            tokenizer=self.pipe_txt2img.tokenizer,
+            unet=self.pipe_txt2img.unet,
+            scheduler=self.pipe_txt2img.scheduler,
+            safety_checker=self.pipe_txt2img.safety_checker,
+            feature_extractor=self.pipe_txt2img.feature_extractor,
+        ).to(device)
 
     def generate(
         self,
