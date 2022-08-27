@@ -128,7 +128,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
             const rect = event.target.getBoundingClientRect();
             const x = (event.clientX - rect.left) * this.canvas_scale;
             const y = (event.clientY - rect.top) * this.canvas_scale;
-            console.log(x, y);
             if (this.click_point0 !== null) {
               const pA = this.click_point0;
               const pB = [x, y];
