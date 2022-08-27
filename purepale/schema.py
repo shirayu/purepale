@@ -14,6 +14,7 @@ class Parameters(BaseModel):
     guidance_scale: float = 7.5
     eta: float = 0.0
     strength: float = 0.8
+    seed: Optional[int] = None
 
 
 class ImageMask(BaseModel):
@@ -45,6 +46,7 @@ class WebRequest(BaseModel):
 
 class WebResponse(BaseModel):
     path: str
+    parameters: Parameters
 
 
 class Info(BaseModel):

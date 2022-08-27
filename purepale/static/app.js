@@ -18,6 +18,12 @@ function get_query(vue) {
     const k = inp.id.replace("input_", "");
     if (k == "prompt") {
       q.prompt = inp.value;
+    } else if (k == "seed") {
+      if (inp.value.trim().length == 0) {
+        q.parameters[k] = null;
+      } else {
+        q.parameters[k] = Number(inp.value);
+      }
     } else {
       q.parameters[k] = inp.value;
     }

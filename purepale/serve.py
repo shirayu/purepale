@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import random
 import shutil
 import uuid
 from io import BytesIO
@@ -70,6 +71,7 @@ class Pipes:
         *,
         request: PipesRequest,
     ):
+        assert request.parameters.seed is not None
 
         kwargs = {}
         model = self.pipe_txt2img
@@ -87,6 +89,11 @@ class Pipes:
             kwargs["height"] = request.parameters.height
             kwargs["width"] = request.parameters.width
 
+        generator = None
+        if self.device == "cpu":
+            generator = torch.manual_seed(request.parameters.seed)
+        else:
+            generator = torch.cuda.manual_seed(request.parameters.seed)
         with torch.no_grad():
             with autocast(self.device):
                 image = model(
@@ -94,6 +101,7 @@ class Pipes:
                     num_inference_steps=request.parameters.num_inference_steps,
                     guidance_scale=request.parameters.guidance_scale,
                     eta=request.parameters.eta,
+                    generator=generator,
                     **kwargs,
                 )["sample"][0]
         return image
@@ -151,6 +159,9 @@ def get_app(opts):
                     )
                 mask_img = mask_img.resize((request.parameters.height, request.parameters.width))
 
+            if request.parameters.seed is None:
+                request.parameters.seed = random.randint(-0x8000_0000_0000_0000, 0xFFFF_FFFF_FFFF_FFFF)
+
             image = pipes.generate(
                 request=PipesRequest(
                     prompt=request.prompt,
@@ -170,6 +181,7 @@ def get_app(opts):
         image.save(path_outfile)
         return WebResponse(
             path=f"images/{path_outfile.name}",
+            parameters=request.parameters,
         )
 
     @app.get("/api/info", response_model=Info)
