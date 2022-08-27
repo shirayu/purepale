@@ -6,6 +6,7 @@ import shutil
 import uuid
 from io import BytesIO
 from pathlib import Path
+from typing import Optional
 
 import numpy as np
 import PIL
@@ -73,6 +74,45 @@ class Pipes:
             feature_extractor=self.pipe_txt2img.feature_extractor,
         ).to("cuda")
 
+    def generate(
+        self,
+        *,
+        request: WebRequest,
+        path_img: Path,
+        device: str,
+    ):
+        path_ii: Optional[Path] = None
+        if request.path_initial_image:
+            path_ii = path_img.joinpath(Path(request.path_initial_image).name)
+            if not path_ii.exists():
+                raise FileNotFoundError(f"Not Found: {request.path_initial_image}")
+
+        kwargs = {}
+        model = self.pipe_txt2img
+        if path_ii is not None:
+            model = self.pipe_img2img
+            init_image = None
+            with path_ii.open("rb") as imgf:
+                init_image = PIL.Image.open(BytesIO(imgf.read())).convert("RGB")
+            init_image = init_image.resize((request.parameters.height, request.parameters.width))
+            init_image = preprocess(init_image)
+            kwargs["init_image"] = init_image
+            kwargs["strength"] = request.parameters.strength
+        else:
+            kwargs["height"] = request.parameters.height
+            kwargs["width"] = request.parameters.width
+
+        with torch.no_grad():
+            with autocast(device):
+                image = model(
+                    request.prompt,
+                    num_inference_steps=request.parameters.num_inference_steps,
+                    guidance_scale=request.parameters.guidance_scale,
+                    eta=request.parameters.eta,
+                    **kwargs,
+                )["sample"][0]
+        return image
+
 
 def get_app(opts):
     path_out: Path = opts.output
@@ -99,47 +139,21 @@ def get_app(opts):
 
     @app.post("/api/generate", response_model=WebResponse)
     def api_generate(request: WebRequest):
-        with torch.no_grad():
-            with autocast(device):
-                try:
-                    kwargs = {}
-                    model = pipes.pipe_txt2img
-                    if request.path_initial_image:
-                        path_ii = path_out.joinpath(Path(request.path_initial_image).name)
-                        if not path_ii.exists():
-                            raise HTTPException(
-                                status_code=400,
-                                detail="File does not exist",
-                            )
+        try:
+            image = pipes.generate(
+                request=request,
+                device=device,
+                path_img=path_out,
+            )
+        except Exception as e:
+            raise HTTPException(
+                status_code=400,
+                detail="".join(e.args),
+            )
 
-                        model = pipes.pipe_img2img
-                        init_image = None
-                        with path_ii.open("rb") as imgf:
-                            init_image = PIL.Image.open(BytesIO(imgf.read())).convert("RGB")
-                        init_image = init_image.resize((request.parameters.height, request.parameters.width))
-                        init_image = preprocess(init_image)
-                        kwargs["init_image"] = init_image
-                        kwargs["strength"] = request.parameters.strength
-                    else:
-                        kwargs["height"] = request.parameters.height
-                        kwargs["width"] = request.parameters.width
-
-                    image = model(
-                        request.prompt,
-                        num_inference_steps=request.parameters.num_inference_steps,
-                        guidance_scale=request.parameters.guidance_scale,
-                        eta=request.parameters.eta,
-                        **kwargs,
-                    )["sample"][0]
-                except Exception as e:
-                    raise HTTPException(
-                        status_code=400,
-                        detail="".join(e.args),
-                    )
-
-                name = str(uuid.uuid4())
-                path_outfile: Path = path_out.joinpath(f"{name}.png")
-                image.save(path_outfile)
+        name = str(uuid.uuid4())
+        path_outfile: Path = path_out.joinpath(f"{name}.png")
+        image.save(path_outfile)
         return WebResponse(
             path=f"images/{path_outfile.name}",
         )
