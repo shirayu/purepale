@@ -5,7 +5,7 @@ description = ""
 authors = ["Yuta Hayashibe <yuta@hayashibe.jp>"]
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.12"
+python = ">=3.8,<3.12"
 diffusers = "^0.2.4"
 transformers = "^4.21.1"
 scipy = "^1.9.0"

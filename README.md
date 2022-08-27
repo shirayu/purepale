@@ -10,7 +10,10 @@ A simple web interface of image generations
 ## Setup
 
 ```bash
+# Download torch for cuda
 wget https://download.pytorch.org/whl/cu116/torch-1.12.1%2Bcu116-cp310-cp310-linux_x86_64.whl -P wheel
+
+# Install with poetry
 poetry install --no-dev
 ```
 
