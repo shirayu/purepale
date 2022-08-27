@@ -29,7 +29,7 @@ function get_query(vue) {
 function disable_input(st) {
   const inputs = document.getElementsByTagName("input");
   for (const inp of inputs) {
-    if (inp.id == "control_loop") {
+    if (inp.id == "control_repeat") {
       continue;
     }
     inp.disabled = st;
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     data: {
       results: [],
       finished: true,
-      contorol_loop: false,
+      contorol_repeat: false,
       path_initial_image: null,
 
       use_image_mask: false,
@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
             this.finished = true;
             this.results.splice();
             disable_input(false);
-            if (this.results[0].error === undefined && this.contorol_loop) {
+            if (this.results[0].error === undefined && this.contorol_repeat) {
               document.getElementById("input_prompt").value = query.prompt;
               this.action();
             }
