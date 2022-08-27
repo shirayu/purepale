@@ -2,7 +2,7 @@
 
 from typing import Any, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 
 class Parameters(BaseModel):
@@ -28,6 +28,12 @@ class WebRequest(BaseModel):
     path_initial_image: Optional[str] = None
     path_initial_image_mask: Optional[str] = None
     parameters: Parameters = Parameters()
+
+    @validator("path_initial_image_mask")
+    def mask(cls, v, values, **kwargs):
+        if v is not None and values["path_initial_image"] is None:
+            raise ValueError("Mask should be with original image")
+        return v
 
 
 class WebResponse(BaseModel):

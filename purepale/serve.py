@@ -72,6 +72,13 @@ class Pipes:
 
         kwargs = {}
         model = self.pipe_txt2img
+        if request.initial_image_mask is not None:
+            model = self.pipe_masked_img2img
+            init_image_tensor = preprocess(request.initial_image)
+            init_image_mask_tensor = preprocess(request.initial_image_mask)
+            kwargs["init_image"] = init_image_tensor
+            kwargs["mask_image"] = init_image_mask_tensor
+            kwargs["strength"] = request.parameters.strength
         if request.initial_image is not None:
             model = self.pipe_img2img
             init_image_tensor = preprocess(request.initial_image)
@@ -129,11 +136,21 @@ def get_app(opts):
                     init_image = PIL.Image.open(BytesIO(imgf.read())).convert("RGB")
                 init_image = init_image.resize((request.parameters.height, request.parameters.width))
 
+            init_image_mask = None
+            if request.path_initial_image_mask:
+                path_ii: Optional[Path] = None
+                path_ii = path_out.joinpath(Path(request.path_initial_image_mask).name)
+                if not path_ii.exists():
+                    raise FileNotFoundError(f"Not Found: {request.path_initial_image_mask}")
+                with path_ii.open("rb") as imgf:
+                    init_image_mask = PIL.Image.open(BytesIO(imgf.read())).convert("RGB")
+                init_image_mask = init_image_mask.resize((request.parameters.height, request.parameters.width))
+
             image = pipes.generate(
                 request=PipesRequest(
                     prompt=request.prompt,
                     initial_image=init_image,
-                    initial_image_mask=None,
+                    initial_image_mask=init_image_mask,
                     parameters=request.parameters,
                 )
             )
