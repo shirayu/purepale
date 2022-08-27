@@ -150,7 +150,7 @@ def get_app(opts):
                 for mask in request.initial_image_masks:
                     draw.rectangle(
                         (mask.a_x, mask.a_y, mask.b_x, mask.b_y),
-                        fill=(255, 255, 255),
+                        fill=255,
                     )
                 mask_img = mask_img.resize((request.parameters.height, request.parameters.width))
 
