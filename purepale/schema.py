@@ -36,7 +36,7 @@ class WebRequest(BaseModel):
     initial_image_masks: Optional[List[ImageMask]] = None
     parameters: Parameters = Parameters()
 
-    @validator("path_initial_image_mask")
+    @validator("initial_image_masks")
     def mask(cls, v, values, **kwargs):
         if v is not None and values["path_initial_image"] is None:
             raise ValueError("Mask should be with original image")
