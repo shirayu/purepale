@@ -160,7 +160,7 @@ def get_app(opts):
                 mask_img = mask_img.resize((request.parameters.height, request.parameters.width))
 
             if request.parameters.seed is None:
-                request.parameters.seed = random.randint(-0x8000_0000_0000_0000, 0xFFFF_FFFF_FFFF_FFFF)
+                request.parameters.seed = random.randint(-9007199254740991, 9007199254740991)
 
             image = pipes.generate(
                 request=PipesRequest(
