@@ -99,7 +99,6 @@
                         <input class="form-check-input" id="control_use_image_mask" type="checkbox" v-model="use_image_mask">
                         <label class="form-check-label" for="control_use_image_mask">Mask</label>
                     </div>
-                    <button v-if="use_image_mask" id="button_ii_mask_clear" type="button" class="btn btn-primary" v-on:click="initialize_mask()">Clear</button>
                 </div>
                 <div class="col" v-if="path_initial_image">
                     <canvas v-if="use_image_mask" id="canvas_ii_mask"></canvas>

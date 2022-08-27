@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
           ctx.drawImage(orig_img, 0, 0);
           this.canvas_scale = canvas.height / canvas_max_height;
           canvas.style.width = orig_img.width / this.canvas_scale + "px";
-          canvas.style.height = orig_img.height / this.canvas_scale+ "px";
+          canvas.style.height = orig_img.height / this.canvas_scale + "px";
 
           canvas.addEventListener("click", (event) => {
             const rect = event.target.getBoundingClientRect();
@@ -156,8 +156,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
     },
 
     watch: {
-      use_image_mask: function () {
-        this.initialize_mask();
+      use_image_mask: function (new_val) {
+        if (new_val) {
+          this.initialize_mask();
+        }
       },
       path_initial_image: function () {
         this.use_image_mask = false;
