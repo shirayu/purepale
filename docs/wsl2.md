@@ -1,9 +1,11 @@
 
-# Tips to run on WSL2
+# Tips to run on Linux in Windows WSL2
 
-If you want to access from other machines, you need to open ports.
+## CUDA setup
 
-## Auto setup
+- Please read the [blog article](https://touch-sp.hatenablog.com/entry/2022/05/05/114358)
+
+## Port setup
 
 - Please read the [blog article of setting instruction](https://scratchpad.jp/ubuntu-on-windows11-13/)
 

@@ -28,7 +28,7 @@ poetry run python -m purepale.serve -o ~/IMG --port 8000
 
 ## Documents
 
-- [Tips to run on WSL2](docs/wsl2.md)
+- [Tips to run on Linux in Windows WSL2](docs/wsl2.md)
 
 ## License
 
