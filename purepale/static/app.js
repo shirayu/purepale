@@ -39,6 +39,8 @@ function disable_input(st) {
   }
 }
 
+const canvas_max_height = 250;
+
 document.addEventListener("DOMContentLoaded", (event) => {
   const vue = new Vue({
     el: "#app",
@@ -50,6 +52,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
       use_image_mask: false,
       initial_image_masks: null,
+      click_point0: null,
       path_initial_image_masks: null,
     },
     methods: {
@@ -117,6 +120,37 @@ document.addEventListener("DOMContentLoaded", (event) => {
           canvas.height = orig_img.height;
           const ctx = canvas.getContext("2d");
           ctx.drawImage(orig_img, 0, 0);
+          this.canvas_scale = canvas.height / canvas_max_height;
+          canvas.style.width = orig_img.width / this.canvas_scale + "px";
+          canvas.style.height = orig_img.height / this.canvas_scale+ "px";
+
+          canvas.addEventListener("click", (event) => {
+            const rect = event.target.getBoundingClientRect();
+            const x = (event.clientX - rect.left) * this.canvas_scale;
+            const y = (event.clientY - rect.top) * this.canvas_scale;
+            console.log(x, y);
+            if (this.click_point0 !== null) {
+              const pA = this.click_point0;
+              const pB = [x, y];
+              if (pA[0] > pB[0]) {
+                //swap
+                const tmp = pA[0];
+                pA[0] = pB[0];
+                pB[0] = tmp;
+              }
+              if (pA[1] > pB[1]) {
+                //swap
+                const tmp = pA[1];
+                pA[1] = pB[1];
+                pB[1] = tmp;
+              }
+
+              ctx.fillRect(pA[0], pA[1], pB[0] - pA[0], pB[1] - pA[1]);
+              this.click_point0 = null;
+            } else {
+              this.click_point0 = [x, y];
+            }
+          });
         });
       },
     },
