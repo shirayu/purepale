@@ -165,6 +165,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
       use_image_mask: function (new_val) {
         if (new_val) {
           this.initialize_mask();
+        } else {
+          this.initial_image_masks = null;
         }
       },
       path_initial_image: function () {
