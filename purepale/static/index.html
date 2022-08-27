@@ -88,8 +88,21 @@
                             <button id="button_ii_clear" type="button" class="btn btn-primary" v-on:click="clear_path_initial_image()">Clear</button>
 
                             <img :src="path_initial_image" id="img_init_image_preview" alt="Initial image" style="height:250px;" v-if="path_initial_image">
+
                         </label>
+
                     </div>
+                </div>
+
+                <div class="col" v-if="path_initial_image">
+                    <div class="form-check">
+                        <input class="form-check-input" id="control_use_image_mask" type="checkbox" v-model="use_image_mask">
+                        <label class="form-check-label" for="control_use_image_mask">Mask</label>
+                    </div>
+                    <button v-if="use_image_mask" id="button_ii_mask_clear" type="button" class="btn btn-primary" v-on:click="initialize_mask()">Clear</button>
+                </div>
+                <div class="col" v-if="path_initial_image">
+                    <canvas v-if="use_image_mask" id="canvas_ii_mask" style="height:250px;"></canvas>
                 </div>
 
             </div>

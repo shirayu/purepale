@@ -47,6 +47,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
       finished: true,
       contorol_loop: false,
       path_initial_image: null,
+
+      use_image_mask: false,
+      initial_image_masks: null,
+      path_initial_image_masks: null,
     },
     methods: {
       clear_path_initial_image: function () {
@@ -103,6 +107,27 @@ document.addEventListener("DOMContentLoaded", (event) => {
         dom_in.value = p;
         this.action();
       },
+
+      initialize_mask: function () {
+        const orig_img = new Image();
+        orig_img.src = this.path_initial_image;
+        orig_img.addEventListener("load", () => {
+          const canvas = document.getElementById("canvas_ii_mask");
+          canvas.width = orig_img.width;
+          canvas.height = orig_img.height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(orig_img, 0, 0);
+        });
+      },
+    },
+
+    watch: {
+      use_image_mask: function () {
+        this.initialize_mask();
+      },
+      path_initial_image: function () {
+        this.use_image_mask = false;
+      },
     },
   });
 
@@ -121,7 +146,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
   file_input.addEventListener("change", (event) => {
     if (file_input.files[0]) {
       const formData = new FormData();
-      formData.append("file", file_input.files[0]);
+      const file = file_input.files[0];
+      formData.append("file", file);
       const request = new Request("/api/upload", {
         method: "POST",
         body: formData,
