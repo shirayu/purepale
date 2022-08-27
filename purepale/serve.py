@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 
 import argparse
-import random
 import shutil
 import uuid
 from io import BytesIO
 from pathlib import Path
 from typing import Optional
 
-import numpy as np
 import PIL
 import PIL.Image
 import torch
@@ -22,27 +20,6 @@ from torch.amp.autocast_mode import autocast
 
 from purepale.schema import Info, Parameters, WebRequest, WebResponse
 from purepale.third_party.image_to_image import StableDiffusionImg2ImgPipeline, preprocess
-
-
-def load_img(path):
-    image = PIL.Image.open(path).convert("RGB")
-    w, h = image.size
-    print(f"loaded input image of size ({w}, {h}) from {path}")
-    w, h = map(lambda x: x - x % 32, (w, h))  # resize to integer multiple of 32
-    image = image.resize((w, h), resample=PIL.Image.LANCZOS)
-    image = np.array(image).astype(np.float32) / 255.0
-    image = image[None].transpose(0, 3, 1, 2)
-    image = torch.from_numpy(image)
-    return 2.0 * image - 1.0
-
-
-def torch_fix_seed(seed: int):
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.backends.cudnn.deterministic = True
-    torch.use_deterministic_algorithms = True
 
 
 class Pipes:
@@ -203,18 +180,11 @@ def get_opts() -> argparse.Namespace:
         "--root_path",
         default="",
     )
-
-    oparser.add_argument(
-        "--seed",
-        type=int,
-    )
     return oparser.parse_args()
 
 
 def main() -> None:
     opts = get_opts()
-    if opts.seed is not None:
-        torch_fix_seed(opts.seed)
     app = get_app(opts)
     uvicorn.run(
         app,  # type: ignore
