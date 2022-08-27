@@ -134,7 +134,7 @@ def get_app(opts):
                     raise FileNotFoundError(f"Not Found: {request.path_initial_image}")
                 with path_ii.open("rb") as imgf:
                     init_image = PIL.Image.open(BytesIO(imgf.read())).convert("RGB")
-                    orig_img_size = init_image.size
+                    orig_img_size = init_image.size[:]
                 init_image = init_image.resize((request.parameters.height, request.parameters.width))
 
             mask_img = None
@@ -142,12 +142,12 @@ def get_app(opts):
                 path_ii: Optional[Path] = None
                 # TODO: Make StableDiffusionInpaintingPipeline accept mask info directly
                 assert orig_img_size is not None
-                mask_img = PIL.Image.new("RGB", orig_img_size, (0, 0, 0))
+                mask_img = PIL.Image.new("L", orig_img_size, 0)
                 draw = PIL.ImageDraw.Draw(mask_img)
                 for mask in request.initial_image_masks:
                     draw.rectangle(
                         (mask.a_x, mask.a_y, mask.b_x, mask.b_y),
-                        fill=(255, 255, 255),
+                        fill=255,
                     )
                 mask_img = mask_img.resize((request.parameters.height, request.parameters.width))
 

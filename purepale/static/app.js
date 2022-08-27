@@ -148,10 +148,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
               ctx.fillRect(pA[0], pA[1], pB[0] - pA[0], pB[1] - pA[1]);
               this.click_point0 = null;
               this.initial_image_masks.push({
-                a_x: pA[0] * this.canvas_scale,
-                a_y: pA[1] * this.canvas_scale,
-                b_x: pB[0] * this.canvas_scale,
-                b_y: pB[1] * this.canvas_scale,
+                a_x: pA[0],
+                a_y: pA[1],
+                b_x: pB[0],
+                b_y: pB[1],
               });
             } else {
               this.click_point0 = [x, y];
