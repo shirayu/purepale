@@ -10,6 +10,7 @@ function get_query(vue) {
     parameters: {},
     prompt: "",
     path_initial_image: vue.path_initial_image,
+    initial_image_masks: vue.initial_image_masks,
   };
 
   const inputs = document.getElementsByTagName("input");
@@ -51,9 +52,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
       path_initial_image: null,
 
       use_image_mask: false,
-      initial_image_masks: null,
       click_point0: null,
-      path_initial_image_masks: null,
+      initial_image_masks: null,
     },
     methods: {
       clear_path_initial_image: function () {
@@ -112,6 +112,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
       },
 
       initialize_mask: function () {
+        this.initial_image_masks = [];
         const orig_img = new Image();
         orig_img.src = this.path_initial_image;
         orig_img.addEventListener("load", () => {
@@ -146,6 +147,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
               ctx.fillRect(pA[0], pA[1], pB[0] - pA[0], pB[1] - pA[1]);
               this.click_point0 = null;
+              this.initial_image_masks.push({
+                a_x: pA[0] * this.canvas_scale,
+                a_y: pA[1] * this.canvas_scale,
+                b_x: pB[0] * this.canvas_scale,
+                b_y: pB[1] * this.canvas_scale,
+              });
             } else {
               this.click_point0 = [x, y];
             }

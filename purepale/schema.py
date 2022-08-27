@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from typing import Any, Optional
+from typing import Any, List, Optional
 
 from pydantic import BaseModel, validator
 
@@ -16,6 +16,13 @@ class Parameters(BaseModel):
     strength: float = 0.8
 
 
+class ImageMask(BaseModel):
+    a_x: int
+    a_y: int
+    b_x: int
+    b_y: int
+
+
 class PipesRequest(BaseModel):
     prompt: str
     initial_image: Optional[Any] = None
@@ -26,7 +33,7 @@ class PipesRequest(BaseModel):
 class WebRequest(BaseModel):
     prompt: str
     path_initial_image: Optional[str] = None
-    path_initial_image_mask: Optional[str] = None
+    initial_image_masks: Optional[List[ImageMask]] = None
     parameters: Parameters = Parameters()
 
     @validator("path_initial_image_mask")

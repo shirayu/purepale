@@ -9,6 +9,7 @@ from typing import Optional
 
 import PIL
 import PIL.Image
+import PIL.ImageDraw
 import torch
 import torch.backends.cudnn
 import uvicorn
@@ -76,6 +77,7 @@ class Pipes:
             model = self.pipe_masked_img2img
             init_image_tensor = preprocess(request.initial_image)
             init_image_mask_tensor = preprocess(request.initial_image_mask)
+
             kwargs["init_image"] = init_image_tensor
             kwargs["mask_image"] = init_image_mask_tensor
             kwargs["strength"] = request.parameters.strength
@@ -127,6 +129,7 @@ def get_app(opts):
     def api_generate(request: WebRequest):
         try:
             init_image = None
+            orig_img_size = None
             if request.path_initial_image:
                 path_ii: Optional[Path] = None
                 path_ii = path_out.joinpath(Path(request.path_initial_image).name)
@@ -134,23 +137,28 @@ def get_app(opts):
                     raise FileNotFoundError(f"Not Found: {request.path_initial_image}")
                 with path_ii.open("rb") as imgf:
                     init_image = PIL.Image.open(BytesIO(imgf.read())).convert("RGB")
+                    orig_img_size = init_image.size
                 init_image = init_image.resize((request.parameters.height, request.parameters.width))
 
-            init_image_mask = None
-            if request.path_initial_image_mask:
+            mask_img = None
+            if request.initial_image_masks is not None:
                 path_ii: Optional[Path] = None
-                path_ii = path_out.joinpath(Path(request.path_initial_image_mask).name)
-                if not path_ii.exists():
-                    raise FileNotFoundError(f"Not Found: {request.path_initial_image_mask}")
-                with path_ii.open("rb") as imgf:
-                    init_image_mask = PIL.Image.open(BytesIO(imgf.read())).convert("RGB")
-                init_image_mask = init_image_mask.resize((request.parameters.height, request.parameters.width))
+                # TODO: Make StableDiffusionInpaintingPipeline accept mask info directly
+                assert orig_img_size is not None
+                mask_img = PIL.Image.new("L", orig_img_size)
+                draw = PIL.ImageDraw.Draw(mask_img)
+                for mask in request.initial_image_masks:
+                    draw.rectangle(
+                        (mask.a_x, mask.a_y, mask.b_x, mask.b_y),
+                        fill=(255, 255, 255),
+                    )
+                mask_img = mask_img.resize((request.parameters.height, request.parameters.width))
 
             image = pipes.generate(
                 request=PipesRequest(
                     prompt=request.prompt,
                     initial_image=init_image,
-                    initial_image_mask=init_image_mask,
+                    initial_image_mask=mask_img,
                     parameters=request.parameters,
                 )
             )
