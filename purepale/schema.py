@@ -2,6 +2,7 @@
 
 from typing import Optional
 
+from PIL.Image import Image
 from pydantic import BaseModel
 
 
@@ -14,6 +15,13 @@ class Parameters(BaseModel):
     guidance_scale: float = 7.5
     eta: float = 0.0
     strength: float = 0.8
+
+
+class PipesRequest(BaseModel):
+    prompt: str
+    initial_image: Optional[Image] = None
+    initial_image_mask: Optional[Image] = None
+    parameters: Parameters
 
 
 class WebRequest(BaseModel):

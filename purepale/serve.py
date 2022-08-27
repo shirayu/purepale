@@ -18,7 +18,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException
 from torch.amp.autocast_mode import autocast
 
-from purepale.schema import Info, Parameters, WebRequest, WebResponse
+from purepale.schema import Info, Parameters, PipesRequest, WebRequest, WebResponse
 from purepale.third_party.image_to_image import StableDiffusionImg2ImgPipeline, preprocess
 from purepale.third_party.inpainting import StableDiffusionInpaintingPipeline
 
@@ -30,6 +30,7 @@ class Pipes:
         model_id: str,
         device: str,
     ):
+        self.device = device
         print(f"Loading... {model_id}")
         self.pipe_txt2img = StableDiffusionPipeline.from_pretrained(
             model_id,
@@ -66,33 +67,22 @@ class Pipes:
     def generate(
         self,
         *,
-        request: WebRequest,
-        path_img: Path,
-        device: str,
+        request: PipesRequest,
     ):
-        path_ii: Optional[Path] = None
-        if request.path_initial_image:
-            path_ii = path_img.joinpath(Path(request.path_initial_image).name)
-            if not path_ii.exists():
-                raise FileNotFoundError(f"Not Found: {request.path_initial_image}")
 
         kwargs = {}
         model = self.pipe_txt2img
-        if path_ii is not None:
+        if request.initial_image is not None:
             model = self.pipe_img2img
-            init_image = None
-            with path_ii.open("rb") as imgf:
-                init_image = PIL.Image.open(BytesIO(imgf.read())).convert("RGB")
-            init_image = init_image.resize((request.parameters.height, request.parameters.width))
-            init_image = preprocess(init_image)
-            kwargs["init_image"] = init_image
+            init_image_tensor = preprocess(request.initial_image)
+            kwargs["init_image"] = init_image_tensor
             kwargs["strength"] = request.parameters.strength
         else:
             kwargs["height"] = request.parameters.height
             kwargs["width"] = request.parameters.width
 
         with torch.no_grad():
-            with autocast(device):
+            with autocast(self.device):
                 image = model(
                     request.prompt,
                     num_inference_steps=request.parameters.num_inference_steps,
@@ -129,10 +119,23 @@ def get_app(opts):
     @app.post("/api/generate", response_model=WebResponse)
     def api_generate(request: WebRequest):
         try:
+            init_image = None
+            if request.path_initial_image:
+                path_ii: Optional[Path] = None
+                path_ii = path_out.joinpath(Path(request.path_initial_image).name)
+                if not path_ii.exists():
+                    raise FileNotFoundError(f"Not Found: {request.path_initial_image}")
+                with path_ii.open("rb") as imgf:
+                    init_image = PIL.Image.open(BytesIO(imgf.read())).convert("RGB")
+                init_image = init_image.resize((request.parameters.height, request.parameters.width))
+
             image = pipes.generate(
-                request=request,
-                device=device,
-                path_img=path_out,
+                request=PipesRequest(
+                    prompt=request.prompt,
+                    initial_image=init_image,
+                    initial_image_mask=None,
+                    parameters=request.parameters,
+                )
             )
         except Exception as e:
             raise HTTPException(
