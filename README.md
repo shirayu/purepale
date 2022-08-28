@@ -26,6 +26,10 @@ poetry install --no-dev
 poetry run python -m purepale.serve -o ~/IMG --port 8000
 ```
 
+## Prompt options
+
+- ``--tileable``: Make images tileable
+
 ## Documents
 
 - [Tips to run on Linux in Windows WSL2](docs/wsl2.md)
