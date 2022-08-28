@@ -14,6 +14,7 @@ import PIL.ImageDraw
 import torch
 import torch.backends.cudnn
 import uvicorn
+from click import confirmation_option
 from diffusers import StableDiffusionPipeline
 from fastapi import FastAPI, UploadFile
 from fastapi.staticfiles import StaticFiles
@@ -23,6 +24,8 @@ from torch.amp.autocast_mode import autocast
 from purepale.schema import Info, Parameters, PipesRequest, WebRequest, WebResponse
 from purepale.third_party.image_to_image import StableDiffusionImg2ImgPipeline, preprocess
 from purepale.third_party.inpainting import StableDiffusionInpaintingPipeline
+
+TILEABLE_COMMAND: str = "--tileable"
 
 
 class Pipes:
@@ -40,6 +43,19 @@ class Pipes:
             torch_dtype=torch.float16,
             use_auth_token=True,
         ).to(device)
+
+        targets = [
+            self.pipe_txt2img.vae,
+            self.pipe_txt2img.text_encoder,
+            self.pipe_txt2img.unet,
+        ]
+        self.conv_layers = []
+        self.conv_layers_original_paddings = []
+        for target in targets:
+            for module in target.modules():
+                if isinstance(module, torch.nn.Conv2d) or isinstance(module, torch.nn.ConvTranspose2d):
+                    self.conv_layers.append(module)
+                    self.conv_layers_original_paddings.append(module.padding_mode)
 
         self.pipe_img2img = StableDiffusionImg2ImgPipeline.from_pretrained(
             model_id,
@@ -89,6 +105,19 @@ class Pipes:
             kwargs["height"] = request.parameters.height
             kwargs["width"] = request.parameters.width
 
+        tileable: bool = False
+        original_prompt: str = request.parameters.prompt
+        if TILEABLE_COMMAND in request.parameters.prompt:
+            request.parameters.prompt = request.parameters.prompt.replace(TILEABLE_COMMAND, "")
+            tileable = True
+        for cl, opad in zip(self.conv_layers, self.conv_layers_original_paddings):
+            if tileable:
+                # This hack is based on lox9973's snippet
+                # https://gitlab.com/-/snippets/2395088
+                cl.padding_mode = "circular"
+            else:
+                cl.padding_mode = opad
+
         generator = None
         if self.device == "cpu":
             generator = torch.manual_seed(request.parameters.seed)
@@ -104,6 +133,7 @@ class Pipes:
                     generator=generator,
                     **kwargs,
                 )["sample"][0]
+        request.parameters.prompt = original_prompt
         return image
 
 
