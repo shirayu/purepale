@@ -14,7 +14,6 @@ import PIL.ImageDraw
 import torch
 import torch.backends.cudnn
 import uvicorn
-from click import confirmation_option
 from diffusers import StableDiffusionPipeline
 from fastapi import FastAPI, UploadFile
 from fastapi.staticfiles import StaticFiles
