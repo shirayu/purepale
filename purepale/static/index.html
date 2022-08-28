@@ -34,7 +34,9 @@
                     <div class="form-check">
                         <input class="form-check-input" id="control_repeat" type="checkbox" v-model="contorol_repeat">
                         <label class="form-check-label" for="control_repeat">Repeat</label>
-                        <button id="button_run" type="button" class="btn btn-primary" v-on:click="action()">Run</button>
+                        <button id="button_run" type="button" class="btn btn-primary" v-on:click="action()" style="width:5em;">
+                            <span class="bi bi-play"></span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -71,12 +73,6 @@
                 </div>
                 <div class="col">
                     <div class="input-group">
-                        <span class="input-group-text">Strength</span>
-                        <input class="form-control" id="input_strength" type="number" step="0.1" min="0" max="1" @keydown.enter="trigger">
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="input-group">
                         <span class="input-group-text">Seed</span>
                         <input class="form-control" id="input_seed" type="number" step="1" @keydown.enter="trigger">
                     </div>
@@ -89,18 +85,25 @@
                 <div class="col">
                     <div class="input-group">
                         <label class="input-group-btn">
-                            <span class="btn btn-primary">
+                            <span class="btn btn-secondary">
                                 Initial image<input type="file" style="display:none" class="uploadFile" id="file_input_initial_image">
                             </span>
-                            <button id="button_ii_clear" type="button" class="btn btn-primary" v-on:click="clear_path_initial_image()">Clear</button>
+                            <button id="button_ii_clear" type="button" class="btn btn-secondary" v-on:click="clear_path_initial_image()">Clear</button>
 
-                            <img :src="path_initial_image" id="img_init_image_preview" alt="Initial image" style="height:250px;" v-if="path_initial_image">
 
                         </label>
 
                     </div>
                 </div>
-
+                <div class="col" v-if="path_initial_image">
+                    <img :src="path_initial_image" id="img_init_image_preview" alt="Initial image" style="height:250px;">
+                </div>
+                <div class="col" v-if="path_initial_image">
+                    <div class="input-group">
+                        <span class="input-group-text">Strength</span>
+                        <input class="form-control" id="input_strength" type="number" value="0.8" step="0.1" min="0" max="1" @keydown.enter="trigger">
+                    </div>
+                </div>
                 <div class="col" v-if="path_initial_image">
                     <div class="form-check">
                         <input class="form-check-input" id="control_use_image_mask" type="checkbox" v-model="use_image_mask">

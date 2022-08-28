@@ -1,7 +1,9 @@
 function set_default_parameters(dparams) {
   for (const key in dparams) {
     const dom_in = document.getElementById(`input_${key}`);
-    dom_in.value = dparams[key];
+    if (dom_in) {
+      dom_in.value = dparams[key];
+    }
   }
 }
 
