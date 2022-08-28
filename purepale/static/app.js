@@ -1,32 +1,17 @@
-function set_default_parameters(dparams) {
-  for (const key in dparams) {
-    const dom_in = document.getElementById(`input_${key}`);
-    if (dom_in) {
-      dom_in.value = dparams[key];
-    }
-  }
-}
-
 function get_query(vue) {
   const q = {
-    parameters: {},
+    parameters: vue.parameters,
     path_initial_image: vue.path_initial_image,
     initial_image_masks: vue.initial_image_masks,
   };
-
-  const inputs = document.getElementsByTagName("input");
-  for (const inp of inputs) {
-    const k = inp.id.replace("input_", "");
-    if (k == "seed") {
-      if (inp.value.trim().length == 0) {
-        q.parameters[k] = null;
-      } else {
-        q.parameters[k] = Number(inp.value);
-      }
+  if (typeof q.parameters.seed === "string") {
+    if (q.parameters.seed.trim().length == 0) {
+      q.parameters.seed = null;
     } else {
-      q.parameters[k] = inp.value;
+      q.parameters.seed = Number(q.parameters.seed);
     }
   }
+  console.log(q.parameters.seed);
 
   return q;
 }
@@ -51,6 +36,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const vue = new Vue({
     el: "#app",
     data: {
+      parameters: {},
       results: [],
       finished: true,
       contorol_repeat: false,
@@ -61,6 +47,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
       initial_image_masks: null,
     },
     methods: {
+      set_default_parameters: function (dparams) {
+        for (const key in dparams) {
+          this.$set(this.parameters, key, dparams[key]);
+        }
+      },
+
       clear_path_initial_image: function () {
         this.path_initial_image = null;
         document.getElementById("file_input_initial_image").value = "";
@@ -183,7 +175,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   axios
     .get("/api/info")
     .then((response) => {
-      set_default_parameters(response.data["default_parameters"]);
+      vue.set_default_parameters(response.data["default_parameters"]);
     })
     .catch((error) => {
       alert(`Error: ${error.message}`);
