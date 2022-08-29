@@ -11,8 +11,6 @@ function get_query(vue) {
       q.parameters.seed = Number(q.parameters.seed);
     }
   }
-  console.log(q.parameters.seed);
-
   return q;
 }
 
@@ -41,6 +39,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
       finished: true,
       contorol_repeat: false,
       path_initial_image: null,
+      ii_prompt: null,
 
       use_image_mask: false,
       click_point0: null,
@@ -56,6 +55,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
       clear_path_initial_image: function () {
         this.path_initial_image = null;
         document.getElementById("file_input_initial_image").value = "";
+        this.ii_prompt = null;
       },
       trigger: async function (event) {
         if (event.keyCode !== 13) {
@@ -98,6 +98,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         if (event.target.dataset.replace == "yes") {
           this.path_initial_image =
             this.results[event.target.dataset.index].path;
+          this.ii_prompt = null;
           return;
         }
         const p =
@@ -105,6 +106,21 @@ document.addEventListener("DOMContentLoaded", (event) => {
         const dom_in = document.getElementById("input_prompt");
         dom_in.value = p;
         this.action();
+      },
+
+      action_img2propt: async function () {
+        const query = {
+          path: this.path_initial_image,
+        };
+        this.ii_prompt = "predicting...";
+        await axios
+          .post("/api/img2prompt", query)
+          .then((response) => {
+            this.ii_prompt = response.data.prompt;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       },
 
       initialize_mask: function () {

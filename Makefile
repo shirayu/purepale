@@ -11,7 +11,7 @@ black:
 isort:
 	find $(TARGET_DIRS) | grep '\.py$$' | grep -v third_party | xargs isort --diff | diff /dev/null -
 pydocstyle:
-	find $(TARGET_DIRS) | grep -v tests | xargs pydocstyle --ignore=D100,D101,D102,D103,D104,D105,D107,D203,D212
+	find $(TARGET_DIRS) | grep '\.py$$' | grep -v tests | grep -v third_party | xargs pydocstyle --ignore=D100,D101,D102,D103,D104,D105,D107,D203,D212
 	
 lint_python: flake8 black isort pydocstyle
 

@@ -19,12 +19,66 @@ from fastapi import FastAPI, UploadFile
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException
 from torch.amp.autocast_mode import autocast
+from torchvision import transforms
+from torchvision.transforms.functional import InterpolationMode
 
-from purepale.schema import Info, Parameters, PipesRequest, WebRequest, WebResponse
+from purepale.schema import (
+    Info,
+    Parameters,
+    PipesRequest,
+    WebImg2PromptRequest,
+    WebImg2PromptResponse,
+    WebRequest,
+    WebResponse,
+)
+from purepale.third_party.blip.blip import blip_decoder
 from purepale.third_party.image_to_image import StableDiffusionImg2ImgPipeline, preprocess
 from purepale.third_party.inpainting import StableDiffusionInpaintingPipeline
 
 TILEABLE_COMMAND: str = "--tileable"
+
+
+class BLIP:
+    def __init__(self, device: str):
+        self.device = device
+        self.blip_image_eval_size: int = 384
+        blip_model_url = (
+            "https://storage.googleapis.com/sfr-vision-language-research/BLIP/models/model*_base_caption.pth"
+        )
+        blip_model = blip_decoder(
+            med_config=str(Path(__file__).parent.joinpath("third_party/blip/med_config.json")),
+            pretrained=blip_model_url,
+            image_size=self.blip_image_eval_size,
+            vit="base",
+        )
+        blip_model.eval()
+        self.blip_model = blip_model.to(device)
+
+    def predict(self, image):
+        gpu_image = (
+            transforms.Compose(
+                [
+                    transforms.Resize(
+                        (self.blip_image_eval_size, self.blip_image_eval_size),
+                        interpolation=InterpolationMode.BICUBIC,
+                    ),
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.48145466, 0.4578275, 0.40821073), (0.26862954, 0.26130258, 0.27577711)),
+                ]
+            )(image)
+            .unsqueeze(0)
+            .to(self.device)
+        )
+
+        with torch.no_grad():
+            caption = self.blip_model.generate(
+                gpu_image,
+                sample=False,
+                num_beams=3,
+                max_length=20,
+                min_length=5,
+            )
+        return caption[0]
 
 
 class Pipes:
@@ -35,6 +89,10 @@ class Pipes:
         device: str,
     ):
         self.device = device
+
+        print("Loading... BIIP")
+        self.blip = BLIP(device)
+
         print(f"Loading... {model_id}")
         self.pipe_txt2img = StableDiffusionPipeline.from_pretrained(
             model_id,
@@ -158,6 +216,18 @@ def get_app(opts):
         with path_outfile.open("wb") as outf:
             shutil.copyfileobj(file.file, outf)
         return {"path": f"images/{outfile_name}"}
+
+    @app.post("/api/img2prompt", response_model=WebImg2PromptResponse)
+    def api_img2prompt(request: WebImg2PromptRequest):
+        path_ii = path_out.joinpath(Path(request.path).name)
+        if not path_ii.exists():
+            raise FileNotFoundError(f"Not Found: {request.path}")
+        with path_ii.open("rb") as imgf:
+            image = PIL.Image.open(BytesIO(imgf.read())).convert("RGB")
+            prompt: str = pipes.blip.predict(image)
+        return WebImg2PromptResponse(
+            prompt=prompt,
+        )
 
     @app.post("/api/generate", response_model=WebResponse)
     def api_generate(request: WebRequest):

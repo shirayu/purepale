@@ -48,5 +48,13 @@ class WebResponse(BaseModel):
     parameters: Parameters
 
 
+class WebImg2PromptRequest(BaseModel):
+    path: str
+
+
+class WebImg2PromptResponse(BaseModel):
+    prompt: str
+
+
 class Info(BaseModel):
     default_parameters: Parameters

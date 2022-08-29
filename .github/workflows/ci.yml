@@ -32,9 +32,7 @@ jobs:
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
 
       - run: pip install poetry
-      - run: |
-          python .github/fix_poetry_for_ci.py | xargs -t poetry add
-          poetry install
+      - run: poetry install
 
       - uses: actions/setup-node@v3
         with:
