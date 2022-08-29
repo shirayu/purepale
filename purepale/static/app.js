@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         this.action();
       },
 
-      action_img2propt: async function () {
+      action_img2prompt: async function () {
         const query = {
           path: this.path_initial_image,
         };
