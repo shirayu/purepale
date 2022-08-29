@@ -11,6 +11,7 @@ A simple web interface of image generations
 
 ```bash
 # Install with poetry
+## https://python-poetry.org/docs/
 poetry install --no-dev
 
 # Download torch for cuda
@@ -20,6 +21,14 @@ wget http://download.pytorch.org/whl/cu116/torchvision-0.13.1%2Bcu116-cp310-cp31
 poetry run pip install wheels/*
 ```
 
+## Features
+
+- Infinite generation mode
+- [img2txt](https://twitter.com/shirayu/status/1564242586738790406)
+- [img2img](https://twitter.com/shirayu/status/1563138353201291266)
+- [masked_img2img](https://twitter.com/shirayu/status/1563466297668935680)
+- Automatic JSON logging of queries
+
 ## Run
 
 ```bash
@@ -28,7 +37,7 @@ poetry run python -m purepale.serve -o ~/IMG --port 8000
 
 ## Prompt options
 
-- ``--tileable``: Make images tileable
+- ``--tileable``: [Make images tileable](https://twitter.com/shirayu/status/1563907466131537920)
 
 ## Documents
 
