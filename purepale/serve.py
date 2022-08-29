@@ -191,6 +191,12 @@ def get_app(opts):
             if request.parameters.seed is None:
                 request.parameters.seed = random.randint(-9007199254740991, 9007199254740991)
 
+            out_name = str(uuid.uuid4())
+            path_log: Path = path_out.joinpath(f"{out_name}.json")
+            with path_log.open("w") as outlogf:
+                outlogf.write(request.json(indent=4))
+                outlogf.write("\n")
+
             image = pipes.generate(
                 request=PipesRequest(
                     initial_image=init_image,
@@ -204,8 +210,7 @@ def get_app(opts):
                 detail="".join(e.args),
             )
 
-        name = str(uuid.uuid4())
-        path_outfile: Path = path_out.joinpath(f"{name}.png")
+        path_outfile: Path = path_out.joinpath(f"{out_name}.png")
         image.save(path_outfile)
         return WebResponse(
             path=f"images/{path_outfile.name}",
