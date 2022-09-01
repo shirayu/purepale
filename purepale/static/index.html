@@ -75,6 +75,10 @@
                     <div class="input-group">
                         <span class="input-group-text">Seed</span>
                         <input class="form-control" id="input_seed" type="number" step="1" @keydown.enter="trigger" v-model="parameters.seed">
+                        <button id="button_run" type="button" class="btn btn-secondary" @click="parameters.seed = ''">
+                            <span class="bi bi-x-square"></span>
+                        </button>
+
                     </div>
                 </div>
 
