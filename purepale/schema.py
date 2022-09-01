@@ -11,7 +11,7 @@ class Parameters(BaseModel):
     prompt: str = ""
     height: int = 512
     width: int = 512
-    num_inference_steps: int = 50
+    num_inference_steps: int = 20
     guidance_scale: float = 7.5
     eta: float = 0.0
     strength: float = 0.8
