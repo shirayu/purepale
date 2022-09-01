@@ -140,10 +140,6 @@
                     </div>
                     <div>
                         {{result.parameters.prompt}}
-                        <details>
-                            <summary>JSON</summary>
-                            <pre v-if="result" class="border">{{result}}</pre>
-                        </details>
                         <div v-if="result.error" class="alert alert-danger" role="alert">
                             {{result.error}}
                         </div>
@@ -154,6 +150,10 @@
                             <button class="btn btn-secondary" @click="trigger_retry" :data-index="(row_idx -1)* 4 + col_idx" data-replace="no">
                                 <span class="bi bi-arrow-counterclockwise" :data-index="(row_idx -1)* 4 + col_idx" data-replace="no"></span>
                             </button>
+                            <details>
+                                <summary>JSON</summary>
+                                <pre v-if="result" class="border">{{result}}</pre>
+                            </details>
 
                         </div>
                     </div>
