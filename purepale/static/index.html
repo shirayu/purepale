@@ -86,19 +86,21 @@
                     <div class="input-group">
                         <label class="input-group-btn">
                             <span class="btn btn-secondary">
-                                Initial image<input type="file" style="display:none" class="uploadFile" id="file_input_initial_image">
+                                <span class="bi bi-image"></span>
+                                <input type="file" style="display:none" class="uploadFile" id="file_input_initial_image">
                             </span>
                         </label>
-
-                        <button id="button_ii_clear" type="button" class="ms-1 btn btn-secondary" v-on:click="clear_path_initial_image()">Clear</button>
                     </div>
                 </div>
                 <div class="col" v-if="path_initial_image">
                     <div>
-                    <img :src="path_initial_image" id="img_init_image_preview" alt="Initial image" style="height:250px;">
+                        <img :src="path_initial_image" id="img_init_image_preview" alt="Initial image" style="height:250px;">
                     </div>
                     <button class="ms-1 btn btn-secondary" @click="action_img2prompt" v-if="ii_prompt===null">
                         <span class="bi bi-card-text"></span>
+                    </button>
+                    <button id="button_ii_clear" type="button" class="ms-1 btn btn-secondary" v-on:click="clear_path_initial_image()">
+                        <span class="bi bi-trash"></span>
                     </button>
                     <div id="img2prompt-result">{{ii_prompt}}</div>
                 </div>
