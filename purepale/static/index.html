@@ -41,41 +41,43 @@
                 </div>
             </div>
             <div class="mb-3 row">
-                <div class="col">
+                <div class="col-sm-6 col-lg-2">
                     <div class="input-group">
-                        <span class="input-group-text">Height</span>
-                        <input class="form-control" id="input_height" v-model="parameters.height" type="number" step="8" @keydown.enter="trigger">
+                        <input class="form-control" id="input_height" v-model="parameters.height" type="number" step="8" @keydown.enter="trigger" placeholder="H">
+                        x
+                        <input class="form-control" id="input_width" v-model="parameters.width" type="number" step="8" @keydown.enter="trigger" placeholder="W">
                     </div>
                 </div>
-                <div class="col">
-                    <div class="input-group">
-                        <span class="input-group-text">Width</span>
-                        <input class="form-control" id="input_width" v-model="parameters.width" type="number" step="8" @keydown.enter="trigger">
-                    </div>
-                </div>
-                <div class="col">
+                <div class="col-sm-6 col-lg-2">
                     <div class="input-group">
                         <span class="input-group-text">Steps</span>
                         <input class="form-control" id="input_num_inference_steps" v-model="parameters.num_inference_steps" type="number" @keydown.enter="trigger" min="1" max="1000">
+                        <button id="button_reset_steps" type="button" class="btn btn-secondary" @click="parameters.num_inference_steps=20">
+                            <span class="bi bi-x-square"></span>
+                        </button>
+
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-sm-6 col-lg-2">
                     <div class="input-group">
                         <span class="input-group-text">G-Scale</span>
                         <input class="form-control" id="input_guidance_scale" v-model="parameters.guidance_scale" type="number" step="0.1" @keydown.enter="trigger">
+                        <button id="button_reset_g" type="button" class="btn btn-secondary" @click="parameters.guidance_scale=7.5">
+                            <span class="bi bi-x-square"></span>
+                        </button>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-sm-6 col-lg-2">
                     <div class="input-group">
                         <span class="input-group-text">Eta</span>
                         <input class="form-control" id="input_eta" v-model="parameters.eta" type="number" step="0.1" @keydown.enter="trigger">
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-sm-12 col-lg-4">
                     <div class="input-group">
                         <span class="input-group-text">Seed</span>
                         <input class="form-control" id="input_seed" type="number" step="1" @keydown.enter="trigger" v-model="parameters.seed">
-                        <button id="button_run" type="button" class="btn btn-secondary" @click="parameters.seed = ''">
+                        <button id="button_reset_seed" type="button" class="btn btn-secondary" @click="parameters.seed = ''">
                             <span class="bi bi-x-square"></span>
                         </button>
 
@@ -86,7 +88,7 @@
 
             <div class="row">
 
-                <div class="col">
+                <div class="col-sm-12">
                     <div class="input-group">
                         <label class="input-group-btn">
                             <span class="btn btn-secondary">
@@ -96,7 +98,7 @@
                         </label>
                     </div>
                 </div>
-                <div class="col" v-if="path_initial_image">
+                <div class="col-sm-12" v-if="path_initial_image">
                     <div>
                         <img :src="path_initial_image" id="img_init_image_preview" alt="Initial image" style="height:250px;">
                     </div>
@@ -108,19 +110,19 @@
                     </button>
                     <div id="img2prompt-result">{{ii_prompt}}</div>
                 </div>
-                <div class="col" v-if="path_initial_image">
+                <div class="col-sm-12" v-if="path_initial_image">
                     <div class="input-group">
                         <span class="input-group-text">Strength</span>
                         <input class="form-control" id="input_strength" type="number" v-model="parameters.strength" step="0.1" min="0" max="1" @keydown.enter="trigger">
                     </div>
                 </div>
-                <div class="col" v-if="path_initial_image">
+                <div class="col-sm-2" v-if="path_initial_image">
                     <div class="form-check">
                         <input class="form-check-input" id="control_use_image_mask" type="checkbox" v-model="use_image_mask">
                         <label class="form-check-label" for="control_use_image_mask">Mask</label>
                     </div>
                 </div>
-                <div class="col" v-if="path_initial_image">
+                <div class="col-sm-10" v-if="path_initial_image">
                     <canvas v-if="use_image_mask" id="canvas_ii_mask"></canvas>
                 </div>
 
