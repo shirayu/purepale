@@ -51,7 +51,7 @@
                 <div class="col-sm-6 col-lg-2">
                     <div class="input-group">
                         <span class="input-group-text">Steps</span>
-                        <input class="form-control" id="input_num_inference_steps" v-model="parameters.num_inference_steps" type="number" @keydown.enter="trigger" min="1" max="1000">
+                        <input class="form-control" id="input_num_inference_steps" v-model="parameters.num_inference_steps" type="number" @keydown.enter="trigger" min="1" max="100">
                         <button id="button_reset_steps" type="button" class="btn btn-secondary" @click="parameters.num_inference_steps=20">
                             <span class="bi bi-x-square"></span>
                         </button>
