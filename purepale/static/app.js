@@ -101,10 +101,15 @@ document.addEventListener("DOMContentLoaded", (event) => {
           this.ii_prompt = null;
           return;
         }
-        const p =
-          this.results[event.target.dataset.index].query.parameters.prompt;
-        const dom_in = document.getElementById("input_prompt");
-        dom_in.value = p;
+        if (event.target.dataset.replace == "plus_20_steps") {
+          this.parameters.num_inference_steps =
+            this.results[event.target.dataset.index].parameters
+              .num_inference_steps + 20;
+          this.parameters.seed =
+            this.results[event.target.dataset.index].parameters.seed;
+        }
+        this.parameters.prompt =
+          this.results[event.target.dataset.index].parameters.prompt;
         this.action();
       },
 

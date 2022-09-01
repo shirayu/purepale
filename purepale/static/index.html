@@ -150,12 +150,14 @@
                             <button class="btn btn-secondary" @click="trigger_retry" :data-index="(row_idx -1)* 4 + col_idx" data-replace="no">
                                 <span class="bi bi-arrow-counterclockwise" :data-index="(row_idx -1)* 4 + col_idx" data-replace="no"></span>
                             </button>
-                            <details>
-                                <summary>JSON</summary>
-                                <pre v-if="result" class="border">{{result}}</pre>
-                            </details>
-
+                            <button class="btn btn-secondary" @click="trigger_retry" :data-index="(row_idx -1)* 4 + col_idx" data-replace="plus_20_steps">
+                                <span class="bi bi-arrow-up-right" :data-index="(row_idx -1)* 4 + col_idx" data-replace="plus_20_steps"></span>
+                            </button>
                         </div>
+                        <details>
+                            <summary>JSON</summary>
+                            <pre v-if="result" class="border">{{result}}</pre>
+                        </details>
                     </div>
                 </div>
                 <div class="col-3" v-for="j in (4 - results.length % 4)" v-if="row_idx * 4 > results.length">
