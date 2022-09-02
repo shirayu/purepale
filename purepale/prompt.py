@@ -44,10 +44,14 @@ class Prompt:
                     self.split_prompt.append(item)
                     continue
 
-                self.random_indices.append(len(self.split_prompt))
-                self.split_prompt.append("*")
-                wordset = item[:sep_pos].split(SET_SEPARATOR)
-                self.random_list.append(wordset)
+                wordset: List[str] = item[:sep_pos].split(SET_SEPARATOR)
+
+                if len(wordset) >= 2:
+                    self.random_indices.append(len(self.split_prompt))
+                    self.split_prompt.append("*")
+                    self.random_list.append(wordset)
+                else:
+                    self.split_prompt.append(item[:sep_pos])
 
                 if len(item) - (sep_pos + 1) > 0:
                     tail: str = item[sep_pos + 1 :]
