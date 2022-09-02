@@ -1,22 +1,63 @@
 #!/usr/bin/env python3
 
-from typing import Final
+import random
+from typing import Final, List
 
 TILEABLE_COMMAND: Final[str] = "--tileable"
+REPALCE_COMMAND: Final[str] = "--random"
+
+SET_START: Final[str] = "{"
+SET_END: Final[str] = "}"
+SET_SEPARATOR: Final[str] = "|"
 
 
 class Prompt:
     original: str
     tileable: bool
-    parsed: str
+    _parsed_str: str
+
+    enable_replace: bool
+    split_prompt: List[str]
+    random_indices: List[int]
+    random_list: List[List[str]]
 
     def __init__(self, *, original: str):
         self.original = original
+        self._parsed_str = self.original
         self.tileable = False
+        self.enable_replace = False
 
-        if TILEABLE_COMMAND in self.original:
-            self.parsed = self.original.replace(TILEABLE_COMMAND, "")
+        if TILEABLE_COMMAND in self._parsed_str:
+            self._parsed_str = self._parsed_str.replace(TILEABLE_COMMAND, "")
             self.tileable = True
 
-    def __call__(self):
-        return self.parsed
+        if REPALCE_COMMAND in self._parsed_str:
+            self._parsed_str = self._parsed_str.replace(REPALCE_COMMAND, "")
+            self.enable_replace = True
+            self.split_prompt = []
+            self.random_indices = []
+            self.random_list = []
+
+            for item in self._parsed_str.split(SET_START):
+                sep_pos: int = item.find(SET_END)
+                if sep_pos < 0:
+                    self.split_prompt.append(item)
+                    continue
+
+                self.random_indices.append(len(self.split_prompt))
+                self.split_prompt.append("*")
+                wordset = item[:sep_pos].split(SET_SEPARATOR)
+                self.random_list.append(wordset)
+
+                if len(item) - (sep_pos + 1) > 0:
+                    tail: str = item[sep_pos + 1 :]
+                    self.split_prompt.append(tail)
+
+    def __call__(self) -> str:
+        if not self.enable_replace:
+            return "".join(self._parsed_str)
+
+        tmp = self.split_prompt[:]
+        for idx, myset in zip(self.random_indices, self.random_list):
+            tmp[idx] = random.choice(myset)
+        return "".join(tmp)

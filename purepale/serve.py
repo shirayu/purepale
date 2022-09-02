@@ -6,7 +6,7 @@ import shutil
 import uuid
 from io import BytesIO
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Tuple
 
 import PIL
 import PIL.Image
@@ -142,7 +142,7 @@ class Pipes:
         self,
         *,
         request: PipesRequest,
-    ):
+    ) -> Tuple[PIL.Image.Image, str]:
         assert request.parameters.seed is not None
 
         kwargs = {}
@@ -177,17 +177,19 @@ class Pipes:
             generator = torch.manual_seed(request.parameters.seed)
         else:
             generator = torch.cuda.manual_seed(request.parameters.seed)
+
+        used_prompt: str = prompt()
         with torch.no_grad():
             with autocast(self.device):
                 image = model(
-                    prompt(),
+                    used_prompt,
                     num_inference_steps=request.parameters.num_inference_steps,
                     guidance_scale=request.parameters.guidance_scale,
                     eta=request.parameters.eta,
                     generator=generator,
                     **kwargs,
                 )["sample"][0]
-        return image
+        return image, used_prompt
 
 
 def get_app(opts):
@@ -263,7 +265,7 @@ def get_app(opts):
                 outlogf.write(request.json(indent=4))
                 outlogf.write("\n")
 
-            image = pipes.generate(
+            image, used_prompt = pipes.generate(
                 request=PipesRequest(
                     initial_image=init_image,
                     initial_image_mask=mask_img,
@@ -281,6 +283,7 @@ def get_app(opts):
         return WebResponse(
             path=f"images/{path_outfile.name}",
             parameters=request.parameters,
+            used_prompt=used_prompt,
         )
 
     @app.get("/api/info", response_model=Info)
