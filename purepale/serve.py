@@ -22,6 +22,7 @@ from torch.amp.autocast_mode import autocast
 from torchvision import transforms
 from torchvision.transforms.functional import InterpolationMode
 
+from purepale.prompt import Prompt
 from purepale.schema import (
     Info,
     Parameters,
@@ -34,8 +35,6 @@ from purepale.schema import (
 from purepale.third_party.blip.blip import blip_decoder
 from purepale.third_party.image_to_image import StableDiffusionImg2ImgPipeline, preprocess
 from purepale.third_party.inpainting import StableDiffusionInpaintingPipeline
-
-TILEABLE_COMMAND: str = "--tileable"
 
 
 class BLIP:
@@ -162,13 +161,11 @@ class Pipes:
             kwargs["height"] = request.parameters.height
             kwargs["width"] = request.parameters.width
 
-        tileable: bool = False
-        original_prompt: str = request.parameters.prompt
-        if TILEABLE_COMMAND in request.parameters.prompt:
-            request.parameters.prompt = request.parameters.prompt.replace(TILEABLE_COMMAND, "")
-            tileable = True
+        prompt: Prompt = Prompt(
+            original=request.parameters.prompt,
+        )
         for cl, opad in zip(self.conv_layers, self.conv_layers_original_paddings):
-            if tileable:
+            if prompt.tileable:
                 # This hack is based on lox9973's snippet
                 # https://gitlab.com/-/snippets/2395088
                 cl.padding_mode = "circular"
@@ -183,14 +180,13 @@ class Pipes:
         with torch.no_grad():
             with autocast(self.device):
                 image = model(
-                    request.parameters.prompt,
+                    prompt(),
                     num_inference_steps=request.parameters.num_inference_steps,
                     guidance_scale=request.parameters.guidance_scale,
                     eta=request.parameters.eta,
                     generator=generator,
                     **kwargs,
                 )["sample"][0]
-        request.parameters.prompt = original_prompt
         return image
 
 
