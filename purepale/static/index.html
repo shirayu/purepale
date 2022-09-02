@@ -139,7 +139,14 @@
                         </a>
                     </div>
                     <div>
+                        <span v-if="result.used_prompt">
+                        {{result.used_prompt}}
+                        </span>
+                        <span v-else>
                         {{result.parameters.prompt}}
+                        </span>
+
+
                         <div v-if="result.error" class="alert alert-danger" role="alert">
                             {{result.error}}
                         </div>

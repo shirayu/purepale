@@ -38,6 +38,7 @@ poetry run python -m purepale.serve -o ~/IMG --port 8000
 ## Prompt options
 
 - ``--tileable``: [Make images tileable](https://twitter.com/shirayu/status/1563907466131537920)
+- ``--random``: Choice words randomly (eg: ``{Girl|Boy} with a {red|blue|green} {hat|box} --random``)
 
 ## Documents
 
