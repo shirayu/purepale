@@ -283,7 +283,12 @@ def get_app(opts):
         )
         path_log: Path = path_out.joinpath(f"{out_name}.json")
         with path_log.open("w") as outlogf:
-            outlogf.write(resp.json(indent=4))
+            outlogf.write(
+                resp.json(
+                    indent=4,
+                    ensure_ascii=False,
+                )
+            )
             outlogf.write("\n")
         return resp
 
