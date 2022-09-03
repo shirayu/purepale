@@ -3,6 +3,7 @@
 import argparse
 import random
 import shutil
+import threading
 import uuid
 from io import BytesIO
 from pathlib import Path
@@ -204,6 +205,7 @@ def get_app(opts):
 
     app = FastAPI()
     app.mount("/images", StaticFiles(directory=str(path_out)), name="images")
+    semaphore = threading.Semaphore(opts.max_process)
 
     @app.post("/api/upload")
     async def upload(file: UploadFile):
@@ -259,13 +261,15 @@ def get_app(opts):
             if request.parameters.seed is None:
                 request.parameters.seed = random.randint(-9007199254740991, 9007199254740991)
 
-            image, used_prompt = pipes.generate(
-                request=PipesRequest(
-                    initial_image=init_image,
-                    initial_image_mask=mask_img,
-                    parameters=request.parameters,
+            with semaphore:
+                image, used_prompt = pipes.generate(
+                    request=PipesRequest(
+                        initial_image=init_image,
+                        initial_image_mask=mask_img,
+                        parameters=request.parameters,
+                    )
                 )
-            )
+
         except Exception as e:
             raise HTTPException(
                 status_code=400,
@@ -336,6 +340,12 @@ def get_opts() -> argparse.Namespace:
     oparser.add_argument(
         "--root_path",
         default="",
+    )
+    oparser.add_argument(
+        "--max_process",
+        "-P",
+        default=1,
+        type=int,
     )
     return oparser.parse_args()
 
