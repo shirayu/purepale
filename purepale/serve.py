@@ -15,7 +15,7 @@ import PIL.ImageDraw
 import torch
 import torch.backends.cudnn
 import uvicorn
-from diffusers import StableDiffusionPipeline
+from diffusers import StableDiffusionImg2ImgPipeline, StableDiffusionPipeline
 from fastapi import FastAPI, UploadFile
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException
@@ -34,7 +34,6 @@ from purepale.schema import (
     WebResponse,
 )
 from purepale.third_party.blip.blip import blip_decoder
-from purepale.third_party.image_to_image import StableDiffusionImg2ImgPipeline, preprocess
 from purepale.third_party.inpainting import StableDiffusionInpaintingPipeline
 
 
@@ -156,8 +155,7 @@ class Pipes:
             kwargs["strength"] = request.parameters.strength
         elif request.initial_image is not None:
             model = self.pipe_img2img
-            init_image_tensor = preprocess(request.initial_image)
-            kwargs["init_image"] = init_image_tensor
+            kwargs["init_image"] = request.initial_image
             kwargs["strength"] = request.parameters.strength
         else:
             kwargs["height"] = request.parameters.height
