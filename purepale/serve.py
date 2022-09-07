@@ -15,7 +15,7 @@ import PIL.ImageDraw
 import torch
 import torch.backends.cudnn
 import uvicorn
-from diffusers import StableDiffusionImg2ImgPipeline, StableDiffusionPipeline
+from diffusers import StableDiffusionImg2ImgPipeline, StableDiffusionInpaintPipeline, StableDiffusionPipeline
 from fastapi import FastAPI, UploadFile
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException
@@ -34,7 +34,6 @@ from purepale.schema import (
     WebResponse,
 )
 from purepale.third_party.blip.blip import blip_decoder
-from purepale.third_party.inpainting import StableDiffusionInpaintingPipeline
 
 
 class BLIP:
@@ -128,7 +127,7 @@ class Pipes:
             feature_extractor=self.pipe_txt2img.feature_extractor,
         ).to(device)
 
-        self.pipe_masked_img2img = StableDiffusionInpaintingPipeline(
+        self.pipe_masked_img2img = StableDiffusionInpaintPipeline(
             # Re-use
             vae=self.pipe_txt2img.vae,
             text_encoder=self.pipe_txt2img.text_encoder,
