@@ -84,6 +84,7 @@ class Pipes:
         self,
         *,
         model_id: str,
+        revision: str,
         device: str,
         nosafety: bool,
     ):
@@ -95,8 +96,8 @@ class Pipes:
         print(f"Loading... {model_id}")
         self.pipe_txt2img = StableDiffusionPipeline.from_pretrained(
             model_id,
-            revision="fp16",
-            torch_dtype=torch.float16,
+            revision=revision,
+            torch_dtype=torch.float16 if revision == "fp16" else torch.float32,
             use_auth_token=True,
         ).to(device)
         self.pipe_txt2img.enable_attention_slicing()
@@ -200,6 +201,7 @@ def get_app(opts):
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
     pipes = Pipes(
         model_id=opts.model,
+        revision=opts.revision,
         device=device,
         nosafety=opts.no_safety,
     )
@@ -321,6 +323,10 @@ def get_opts() -> argparse.Namespace:
     oparser.add_argument(
         "--model",
         default="CompVis/stable-diffusion-v1-4",
+    )
+    oparser.add_argument(
+        "--revision",
+        default="fp16",
     )
     oparser.add_argument(
         "--output",
