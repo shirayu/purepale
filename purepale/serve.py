@@ -100,6 +100,7 @@ class Pipes:
             torch_dtype=torch.float16,
             use_auth_token=True,
         ).to(device)
+        self.pipe_txt2img.enable_attention_slicing()
 
         targets = [
             self.pipe_txt2img.vae,
