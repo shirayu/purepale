@@ -85,6 +85,7 @@ class Pipes:
         *,
         model_id: str,
         device: str,
+        nosafety: bool,
     ):
         self.device = device
 
@@ -113,30 +114,31 @@ class Pipes:
                     self.conv_layers.append(module)
                     self.conv_layers_original_paddings.append(module.padding_mode)
 
-        self.pipe_img2img = StableDiffusionImg2ImgPipeline.from_pretrained(
-            model_id,
-            revision="fp16",
-            torch_dtype=torch.float16,
-            use_auth_token=True,
-            # Re-use
+        self.pipe_img2img = StableDiffusionImg2ImgPipeline(
             vae=self.pipe_txt2img.vae,
             text_encoder=self.pipe_txt2img.text_encoder,
             tokenizer=self.pipe_txt2img.tokenizer,
             unet=self.pipe_txt2img.unet,
             scheduler=self.pipe_txt2img.scheduler,
             feature_extractor=self.pipe_txt2img.feature_extractor,
+            safety_checker=self.pipe_txt2img.safety_checker,
         ).to(device)
 
         self.pipe_masked_img2img = StableDiffusionInpaintPipeline(
-            # Re-use
             vae=self.pipe_txt2img.vae,
             text_encoder=self.pipe_txt2img.text_encoder,
             tokenizer=self.pipe_txt2img.tokenizer,
             unet=self.pipe_txt2img.unet,
             scheduler=self.pipe_txt2img.scheduler,
-            safety_checker=self.pipe_txt2img.safety_checker,
             feature_extractor=self.pipe_txt2img.feature_extractor,
+            safety_checker=self.pipe_txt2img.safety_checker,
         ).to(device)
+
+        if nosafety:
+            del self.pipe_txt2img.safety_checker
+            self.pipe_txt2img.safety_checker = lambda images, **kwargs: (images, False)
+            self.pipe_img2img.safety_checker = lambda images, **kwargs: (images, False)
+            self.pipe_masked_img2img.safety_checker = lambda images, **kwargs: (images, False)
 
     def generate(
         self,
@@ -199,6 +201,7 @@ def get_app(opts):
     pipes = Pipes(
         model_id=opts.model,
         device=device,
+        nosafety=opts.no_safety,
     )
 
     app = FastAPI()
@@ -344,6 +347,11 @@ def get_opts() -> argparse.Namespace:
         "-P",
         default=1,
         type=int,
+    )
+    oparser.add_argument(
+        "--no-safety",
+        action="store_true",
+        help="Disable safety_checker with your responsibility",
     )
     return oparser.parse_args()
 
