@@ -35,7 +35,7 @@ poetry run pip install wheels/*
 poetry run python -m purepale.serve -o ~/IMG --port 8000
 ```
 
-- ``--no-blip``: Disable BLIP (caption model) and save VRAM
+- ``--blip``: Enable BLIP (caption model) and save VRAM
 - ``--slice-size``: Enable attention slicing with given number
 
 Check full options with ``poetry run python -m purepale.serve -h``.

@@ -87,13 +87,13 @@ class Pipes:
         revision: str,
         device: str,
         nosafety: bool,
-        noblip: bool,
+        enable_blip: bool,
         slice_size: int,
     ):
         self.device: str = device
         self.blip: Optional[BLIP] = None
 
-        if not noblip:
+        if enable_blip:
             print("Loading... BIIP")
             self.blip = BLIP(device)
 
@@ -210,7 +210,7 @@ def get_app(opts):
         revision=opts.revision,
         device=device,
         nosafety=opts.no_safety,
-        noblip=opts.no_blip,
+        enable_blip=opts.blip,
         slice_size=opts.slice_size,
     )
 
@@ -374,14 +374,14 @@ def get_opts() -> argparse.Namespace:
         help="Disable safety_checker with your responsibility",
     )
     oparser.add_argument(
-        "--no-blip",
+        "--blip",
         action="store_true",
-        help="Disable BILP",
+        help="Enable BILP",
     )
     oparser.add_argument(
         "--slice-size",
         type=int,
-        help="0 means auto, <0 means disabled. Large number saves VRAM but makes slow.",
+        help="0 means auto, Negative number means disabled. Large number saves VRAM but makes slow.",
         default=0,
     )
 
