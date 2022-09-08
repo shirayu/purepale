@@ -88,6 +88,7 @@ class Pipes:
         device: str,
         nosafety: bool,
         noblip: bool,
+        slice_size: int,
     ):
         self.device: str = device
         self.blip: Optional[BLIP] = None
@@ -103,6 +104,9 @@ class Pipes:
             torch_dtype=torch.float16 if revision == "fp16" else torch.float32,
             use_auth_token=True,
         ).to(device)
+        self.pipe_txt2img.enable_attention_slicing(
+            slice_size="auto" if slice_size == 0 else None if slice_size < 0 else slice_size,
+        )
 
         targets = [
             self.pipe_txt2img.vae,
@@ -207,6 +211,7 @@ def get_app(opts):
         device=device,
         nosafety=opts.no_safety,
         noblip=opts.no_blip,
+        slice_size=opts.slice_size,
     )
 
     app = FastAPI()
@@ -373,6 +378,13 @@ def get_opts() -> argparse.Namespace:
         action="store_true",
         help="Disable BILP",
     )
+    oparser.add_argument(
+        "--slice-size",
+        type=int,
+        help="0 means auto, <0 means disabled. Large number saves VRAM but makes slow.",
+        default=0,
+    )
+
     return oparser.parse_args()
 
 
