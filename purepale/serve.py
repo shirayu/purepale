@@ -104,9 +104,10 @@ class Pipes:
             torch_dtype=torch.float16 if revision == "fp16" else torch.float32,
             use_auth_token=True,
         ).to(device)
-        self.pipe_txt2img.enable_attention_slicing(
-            slice_size="auto" if slice_size == 0 else None if slice_size < 0 else slice_size,
-        )
+        if slice_size >= 0:
+            self.pipe_txt2img.enable_attention_slicing(
+                slice_size="auto" if slice_size == 0 else None if slice_size < 0 else slice_size,
+            )
 
         targets = [
             self.pipe_txt2img.vae,
