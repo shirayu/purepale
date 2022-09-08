@@ -88,17 +88,16 @@ toml = ["tomli"]
 
 [[package]]
 name = "diffusers"
-version = "0.3.0.dev0"
+version = "0.3.0"
 description = "Diffusers"
 category = "main"
 optional = false
 python-versions = ">=3.6.0"
-develop = false
 
 [package.dependencies]
 filelock = "*"
 huggingface-hub = ">=0.8.1"
-importlib_metadata = "*"
+importlib-metadata = "*"
 numpy = "*"
 Pillow = "*"
 regex = "!=2019.12.17"
@@ -106,17 +105,11 @@ requests = "*"
 torch = ">=1.4"
 
 [package.extras]
-dev = ["accelerate", "black (==22.3)", "datasets", "flake8 (>=3.8.3)", "hf-doc-builder", "isort (>=5.5.4)", "modelcards", "pytest", "pytest-timeout", "pytest-xdist", "scipy", "tensorboard", "transformers"]
+dev = ["accelerate", "black (==22.3)", "datasets", "flake8 (>=3.8.3)", "hf-doc-builder", "isort (>=5.5.4)", "modelcards", "onnxruntime", "pytest", "pytest-timeout", "pytest-xdist", "scipy", "tensorboard", "transformers"]
 docs = ["hf-doc-builder"]
 quality = ["black (==22.3)", "flake8 (>=3.8.3)", "hf-doc-builder", "isort (>=5.5.4)"]
-test = ["datasets", "pytest", "pytest-timeout", "pytest-xdist", "scipy", "transformers"]
+test = ["datasets", "onnxruntime", "pytest", "pytest-timeout", "pytest-xdist", "scipy", "transformers"]
 training = ["accelerate", "datasets", "modelcards", "tensorboard"]
-
-[package.source]
-type = "git"
-url = "https://github.com/huggingface/diffusers"
-reference = 'f6fb3282b18f44f14bcb95a34a16203906df992a'
-resolved_reference = "f6fb3282b18f44f14bcb95a34a16203906df992a"
 
 [[package]]
 name = "fairscale"
@@ -705,7 +698,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.12"
-content-hash = "b2d40bbbfdc0dfa934284359c1de25095a6b74d69cb5904a7ea23857a20aba71"
+content-hash = "65515991f29c1ee0f0f02228e6e7e6f63a3f468693bf5642863f3426b9120c27"
 
 [metadata.files]
 anyio = [
@@ -805,7 +798,10 @@ coverage = [
     {file = "coverage-6.4.4-pp36.pp37.pp38-none-any.whl", hash = "sha256:f67cf9f406cf0d2f08a3515ce2db5b82625a7257f88aad87904674def6ddaec1"},
     {file = "coverage-6.4.4.tar.gz", hash = "sha256:e16c45b726acb780e1e6f88b286d3c10b3914ab03438f32117c4aa52d7f30d58"},
 ]
-diffusers = []
+diffusers = [
+    {file = "diffusers-0.3.0-py3-none-any.whl", hash = "sha256:191612381924c25bb2462a7e68ebca5dca6c5b6b02a478865b473c9dee7991be"},
+    {file = "diffusers-0.3.0.tar.gz", hash = "sha256:416c92fa5d16c0daf95d2031b902cfb42a9dc28dbd5ecea1c566205a4c8ad8df"},
+]
 fairscale = [
     {file = "fairscale-0.4.9.tar.gz", hash = "sha256:802145e14e38d4b32280eab2e56d14ef153f84296f7fe2ef0e91fd4eb3d65a28"},
 ]
