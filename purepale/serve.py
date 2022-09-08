@@ -38,7 +38,7 @@ from purepale.third_party.blip.blip import blip_decoder
 
 class BLIP:
     def __init__(self, device: str):
-        self.device = device
+        self.device: str = device
         self.blip_image_eval_size: int = 384
         blip_model_url = (
             "https://storage.googleapis.com/sfr-vision-language-research/BLIP/models/model*_base_caption.pth"
@@ -87,11 +87,14 @@ class Pipes:
         revision: str,
         device: str,
         nosafety: bool,
+        noblip: bool,
     ):
-        self.device = device
+        self.device: str = device
+        self.blip: Optional[BLIP] = None
 
-        print("Loading... BIIP")
-        self.blip = BLIP(device)
+        if not noblip:
+            print("Loading... BIIP")
+            self.blip = BLIP(device)
 
         print(f"Loading... {model_id}")
         self.pipe_txt2img = StableDiffusionPipeline.from_pretrained(
@@ -100,7 +103,6 @@ class Pipes:
             torch_dtype=torch.float16 if revision == "fp16" else torch.float32,
             use_auth_token=True,
         ).to(device)
-        self.pipe_txt2img.enable_attention_slicing()
 
         targets = [
             self.pipe_txt2img.vae,
@@ -204,6 +206,7 @@ def get_app(opts):
         revision=opts.revision,
         device=device,
         nosafety=opts.no_safety,
+        noblip=opts.no_blip,
     )
 
     app = FastAPI()
@@ -222,6 +225,12 @@ def get_app(opts):
 
     @app.post("/api/img2prompt", response_model=WebImg2PromptResponse)
     def api_img2prompt(request: WebImg2PromptRequest):
+        if pipes.blip is None:
+            raise HTTPException(
+                status_code=400,
+                detail="BLIP is disabled",
+            )
+
         path_ii = path_out.joinpath(Path(request.path).name)
         if not path_ii.exists():
             raise FileNotFoundError(f"Not Found: {request.path}")
@@ -358,6 +367,11 @@ def get_opts() -> argparse.Namespace:
         "--no-safety",
         action="store_true",
         help="Disable safety_checker with your responsibility",
+    )
+    oparser.add_argument(
+        "--no-blip",
+        action="store_true",
+        help="Disable BILP",
     )
     return oparser.parse_args()
 
