@@ -45,8 +45,10 @@ class WebRequest(BaseModel):
 
 class WebResponse(BaseModel):
     path: str
-    used_prompt: str
     parameters: Parameters
+    used_prompt: str
+    used_prompt_tokens: List[str]
+    used_prompt_truncated: List[str]
 
 
 class WebImg2PromptRequest(BaseModel):

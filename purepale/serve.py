@@ -7,7 +7,7 @@ import threading
 import uuid
 from io import BytesIO
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 
 import PIL
 import PIL.Image
@@ -164,6 +164,13 @@ class Pipes:
             self.pipe_img2img.safety_checker = lambda images, **kwargs: (images, False)
             self.pipe_masked_img2img.safety_checker = lambda images, **kwargs: (images, False)
 
+    # TODO avoid tokenize twice for generation
+    def tokenize(self, text: str) -> Tuple[List[str], List[str]]:
+        tokens = self.pipe_txt2img.tokenizer.tokenize(
+            text,
+        )
+        return tokens, tokens[self.pipe_txt2img.tokenizer.model_max_length :]
+
     def generate(
         self,
         *,
@@ -314,10 +321,13 @@ def get_app(opts):
         path_outfile: Path = path_out.joinpath(f"{out_name}.png")
         image.save(path_outfile)
 
+        used_prompt_tokens, used_prompt_truncated = pipes.tokenize(used_prompt)
         resp = WebResponse(
             path=f"images/{path_outfile.name}",
             parameters=request.parameters,
             used_prompt=used_prompt,
+            used_prompt_tokens=used_prompt_tokens,
+            used_prompt_truncated=used_prompt_truncated,
         )
         path_log: Path = path_out.joinpath(f"{out_name}.json")
         with path_log.open("w") as outlogf:

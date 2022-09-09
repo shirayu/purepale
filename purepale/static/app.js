@@ -76,6 +76,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
           .post("/api/generate", query)
           .then((response) => {
             this.results[0] = response.data;
+            if (response.data.used_prompt_truncated.length > 0) {
+              const tp = response.data.used_prompt_truncated;
+              this.results[0].error = `Truncated prompt: ${tp}`;
+            }
           })
           .catch((error) => {
             this.results[0].path = "/error.png";
