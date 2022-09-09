@@ -15,7 +15,12 @@ import PIL.ImageDraw
 import torch
 import torch.backends.cudnn
 import uvicorn
-from diffusers import StableDiffusionImg2ImgPipeline, StableDiffusionInpaintPipeline, StableDiffusionPipeline
+from diffusers import (
+    DDIMScheduler,
+    StableDiffusionImg2ImgPipeline,
+    StableDiffusionInpaintPipeline,
+    StableDiffusionPipeline,
+)
 from fastapi import FastAPI, UploadFile
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException
@@ -98,11 +103,22 @@ class Pipes:
             self.blip = BLIP(device)
 
         print(f"Loading... {model_id}")
+        kwargs = {}
+        if model_id == "hakurei/waifu-diffusion":
+            kwargs["scheduler"] = DDIMScheduler(
+                beta_start=0.00085,
+                beta_end=0.012,
+                beta_schedule="scaled_linear",
+                clip_sample=False,
+                set_alpha_to_one=False,
+            )
+
         self.pipe_txt2img = StableDiffusionPipeline.from_pretrained(
             model_id,
             revision=revision,
             torch_dtype=torch.float16 if revision == "fp16" else torch.float32,
             use_auth_token=True,
+            **kwargs,
         ).to(device)
         if slice_size >= 0:
             self.pipe_txt2img.enable_attention_slicing(
