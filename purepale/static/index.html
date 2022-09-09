@@ -43,9 +43,9 @@
             <div class="mb-3 row">
                 <div class="col-sm-6 col-lg-2">
                     <div class="input-group">
-                        <input class="form-control" id="input_width" v-model="parameters.width" type="number" step="64" @keydown.enter="trigger" placeholder="W">
+                        <input class="form-control" id="input_width" v-model="parameters.width" type="number" step="64" @keydown.enter="trigger" placeholder="W" @change="trim_wh_size">
                         x
-                        <input class="form-control" id="input_height" v-model="parameters.height" type="number" step="64" @keydown.enter="trigger" placeholder="H">
+                        <input class="form-control" id="input_height" v-model="parameters.height" type="number" step="64" @keydown.enter="trigger" placeholder="H" @change="trim_wh_size">
                     </div>
                 </div>
                 <div class="col-sm-6 col-lg-2">

@@ -57,6 +57,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
         document.getElementById("file_input_initial_image").value = "";
         this.ii_prompt = null;
       },
+      trim_wh_size: function () {
+        this.parameters.width = 64 * Math.round(this.parameters.width / 64);
+        this.parameters.height = 64 * Math.round(this.parameters.height / 64);
+      },
       trigger: async function (event) {
         if (event.keyCode !== 13) {
           return;
