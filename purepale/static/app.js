@@ -1,6 +1,19 @@
 function deep_copy(val) {
   return JSON.parse(JSON.stringify(val));
 }
+function copy_to_clipboard(text) {
+  const textarea = document.createElement("textarea");
+  textarea.style.position = "absolute";
+  textarea.style.opacity = 0;
+  textarea.style.pointerEvents = "none";
+  textarea.value = text;
+
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.setSelectionRange(0, text.length);
+  document.execCommand("copy");
+  textarea.parentNode.removeChild(textarea);
+}
 function get_query(vue) {
   const q = {
     model: deep_copy(vue.model_id),
@@ -124,6 +137,24 @@ document.addEventListener("DOMContentLoaded", (event) => {
         this.parameters.prompt =
           this.results[event.target.dataset.index].request.parameters.prompt;
         this.action();
+      },
+      paste_output_json: function (event) {
+        const r = deep_copy(this.results[event.target.dataset.index]);
+        delete r.used_prompt;
+        delete r.used_prompt_tokens;
+        delete r.path;
+        if (r.request.initial_image_masks !== null) {
+          r.masked_img2img = true;
+        } else if (r.request.path_initial_image !== null) {
+          r.img2img = true;
+        }
+        delete r.request.path_initial_image;
+        delete r.request.initial_image_masks;
+        if (r.used_prompt_truncated.length == 0) {
+          delete r.used_prompt_truncated;
+        }
+        copy_to_clipboard(JSON.stringify(r, undefined, 2));
+        alert("Copied JSON to clipbord!");
       },
 
       action_img2prompt: async function () {

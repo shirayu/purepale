@@ -171,6 +171,9 @@
                             <button class="btn btn-secondary" @click="trigger_retry" :data-index="(row_idx -1)* 4 + col_idx" data-replace="plus_20_steps">
                                 <span class="bi bi-arrow-up-right" :data-index="(row_idx -1)* 4 + col_idx" data-replace="plus_20_steps"></span>
                             </button>
+                            <button class="btn btn-secondary" @click="paste_output_json" :data-index="(row_idx -1)* 4 + col_idx" data-replace="plus_20_steps">
+                                <span class="bi bi-share" :data-index="(row_idx -1)* 4 + col_idx" data-replace="plus_20_steps"></span>
+                            </button>
                         </div>
                         <details>
                             <summary>JSON</summary>
