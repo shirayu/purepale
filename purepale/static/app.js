@@ -114,8 +114,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
             this.results.splice();
             disable_input(false);
             if (this.results[0].error === undefined && this.contorol_repeat) {
-              document.getElementById("input_prompt").value =
-                query.parameters.prompt;
               this.action();
             }
           });
