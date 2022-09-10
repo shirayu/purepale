@@ -1,9 +1,12 @@
+function deep_copy(val) {
+  return JSON.parse(JSON.stringify(val));
+}
 function get_query(vue) {
   const q = {
-    model: vue.model_id,
-    parameters: vue.parameters,
-    path_initial_image: vue.path_initial_image,
-    initial_image_masks: vue.initial_image_masks,
+    model: deep_copy(vue.model_id),
+    parameters: deep_copy(vue.parameters),
+    path_initial_image: deep_copy(vue.path_initial_image),
+    initial_image_masks: deep_copy(vue.initial_image_masks),
   };
   if (typeof q.parameters.seed === "string") {
     if (q.parameters.seed.trim().length == 0) {
@@ -90,7 +93,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
           })
           .catch((error) => {
             this.results[0].path = "/error.png";
-            dom_in.value = this.results[0].parameters.prompt;
             this.results[0].error = error.response.data.detail;
             console.log(error);
           })
