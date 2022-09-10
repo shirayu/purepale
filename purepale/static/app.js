@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
             this.ii_prompt = response.data.prompt;
           })
           .catch((error) => {
-            console.log(error);
+            this.ii_prompt = `${error}`;
           });
       },
 
