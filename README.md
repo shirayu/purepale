@@ -37,6 +37,7 @@ poetry run pip install wheels/*
 poetry run python -m purepale.serve -o ~/IMG --port 8000 --model CompVis/stable-diffusion-v1-4/fp16
 ```
 
+- ``--model``: You can use multiple models
 - ``--blip``: Enable BLIP (caption model) and save VRAM
 - ``--slice-size``: Enable attention slicing with given number
 
