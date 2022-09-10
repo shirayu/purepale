@@ -116,7 +116,7 @@ def get_app(opts):
                 with path_ii.open("rb") as imgf:
                     init_image = PIL.Image.open(BytesIO(imgf.read())).convert("RGB")
                     orig_img_size = init_image.size[:]
-                init_image = init_image.resize((request.parameters.height, request.parameters.width))
+                init_image = init_image.resize((request.parameters.width, request.parameters.height))
 
             mask_img = None
             if request.initial_image_masks is not None:
@@ -157,11 +157,11 @@ def get_app(opts):
         used_prompt_tokens, used_prompt_truncated = pipes.tokenize(used_prompt)
         _model, _rev = name2model_and_revision(name)
         resp = WebResponse(
+            request=request,
             model=_model,
             revision=_rev,
             path=f"images/{path_outfile.name}",
             scheduler=pipes.scheduler_param,
-            parameters=request.parameters,
             used_prompt=used_prompt,
             used_prompt_tokens=used_prompt_tokens,
             used_prompt_truncated=used_prompt_truncated,

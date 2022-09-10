@@ -45,11 +45,11 @@ class WebRequest(BaseModel):
 
 
 class WebResponse(BaseModel):
+    request: WebRequest
     model: str
     revision: str
     path: str
     scheduler: Dict[str, Any]
-    parameters: Parameters
     used_prompt: str
     used_prompt_tokens: List[str]
     used_prompt_truncated: List[str]

@@ -116,13 +116,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
         }
         if (event.target.dataset.replace == "plus_20_steps") {
           this.parameters.num_inference_steps =
-            this.results[event.target.dataset.index].parameters
+            this.results[event.target.dataset.index].request.parameters
               .num_inference_steps + 20;
           this.parameters.seed =
-            this.results[event.target.dataset.index].parameters.seed;
+            this.results[event.target.dataset.index].request.parameters.seed;
         }
         this.parameters.prompt =
-          this.results[event.target.dataset.index].parameters.prompt;
+          this.results[event.target.dataset.index].request.parameters.prompt;
         this.action();
       },
 
