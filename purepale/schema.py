@@ -45,6 +45,8 @@ class WebRequest(BaseModel):
 
 
 class WebResponse(BaseModel):
+    model: str
+    revision: str
     path: str
     parameters: Parameters
     used_prompt: str

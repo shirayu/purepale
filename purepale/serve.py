@@ -7,7 +7,7 @@ import threading
 import uuid
 from io import BytesIO
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import PIL
 import PIL.Image
@@ -32,6 +32,15 @@ from purepale.schema import (
 )
 
 
+def name2model_and_revision(name: str) -> Tuple[str, str]:
+    _items: List[str] = name.split("/")
+    assert 2 <= len(_items) <= 3
+    revision: str = "main"
+    if len(_items) == 3:
+        revision = _items[2]
+    return "/".join(_items[:2]), revision
+
+
 def get_app(opts):
     path_out: Path = opts.output
     path_out.mkdir(exist_ok=True, parents=True)
@@ -45,15 +54,10 @@ def get_app(opts):
 
     name2pipes = {}
     for name in opts.model:
-        _items: List[str] = name.split("/")
-        assert 2 <= len(_items) <= 3
-        _revision: str = "main"
-        if len(_items) == 3:
-            _revision = _items[2]
-
+        _model, _rev = name2model_and_revision(name)
         _pipes = Pipes(
-            model_id="/".join(_items[:2]),
-            revision=_revision,
+            model_id=_model,
+            revision=_rev,
             device=device,
             nosafety=opts.no_safety,
             slice_size=opts.slice_size,
@@ -151,7 +155,10 @@ def get_app(opts):
         image.save(path_outfile)
 
         used_prompt_tokens, used_prompt_truncated = pipes.tokenize(used_prompt)
+        _model, _rev = name2model_and_revision(name)
         resp = WebResponse(
+            model=_model,
+            revision=_rev,
             path=f"images/{path_outfile.name}",
             parameters=request.parameters,
             used_prompt=used_prompt,
