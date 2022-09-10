@@ -32,6 +32,7 @@ class PipesRequest(BaseModel):
 
 
 class WebRequest(BaseModel):
+    model: str
     path_initial_image: Optional[str] = None
     initial_image_masks: Optional[List[ImageMask]] = None
     parameters: Parameters = Parameters()
@@ -61,3 +62,4 @@ class WebImg2PromptResponse(BaseModel):
 
 class Info(BaseModel):
     default_parameters: Parameters
+    suppoted_models: List[str]

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
 import PIL
 import PIL.Image
@@ -15,7 +15,6 @@ from diffusers import (
 )
 from torch.amp.autocast_mode import autocast
 
-from purepale.blip import BLIP
 from purepale.prompt import Prompt
 from purepale.schema import PipesRequest
 
@@ -28,17 +27,13 @@ class Pipes:
         revision: str,
         device: str,
         nosafety: bool,
-        enable_blip: bool,
         slice_size: int,
     ):
         self.device: str = device
-        self.blip: Optional[BLIP] = None
-
-        if enable_blip:
-            print("Loading... BIIP")
-            self.blip = BLIP(device)
 
         print(f"Loading... {model_id}")
+        self.model_id: str = model_id
+        self.revision: str = revision
         kwargs = {}
         if model_id == "hakurei/waifu-diffusion":
             kwargs["scheduler"] = DDIMScheduler(

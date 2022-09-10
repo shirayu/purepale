@@ -7,7 +7,7 @@ import threading
 import uuid
 from io import BytesIO
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 import PIL
 import PIL.Image
@@ -19,6 +19,7 @@ from fastapi import FastAPI, UploadFile
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException
 
+from purepale.blip import BLIP
 from purepale.pipes import Pipes
 from purepale.schema import (
     Info,
@@ -36,14 +37,28 @@ def get_app(opts):
     path_out.mkdir(exist_ok=True, parents=True)
 
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
-    pipes = Pipes(
-        model_id=opts.model,
-        revision=opts.revision,
-        device=device,
-        nosafety=opts.no_safety,
-        enable_blip=opts.blip,
-        slice_size=opts.slice_size,
-    )
+
+    blip: Optional[BLIP] = None
+    if opts.blip:
+        print("Loading... BIIP")
+        blip = BLIP(device)
+
+    name2pipes = {}
+    for name in opts.model:
+        _items: List[str] = name.split("/")
+        assert 2 <= len(_items) <= 3
+        _revision: str = "main"
+        if len(_items) == 3:
+            _revision = _items[2]
+
+        _pipes = Pipes(
+            model_id="/".join(_items[:2]),
+            revision=_revision,
+            device=device,
+            nosafety=opts.no_safety,
+            slice_size=opts.slice_size,
+        )
+        name2pipes[name] = _pipes
 
     app = FastAPI()
     app.mount("/images", StaticFiles(directory=str(path_out)), name="images")
@@ -61,7 +76,7 @@ def get_app(opts):
 
     @app.post("/api/img2prompt", response_model=WebImg2PromptResponse)
     def api_img2prompt(request: WebImg2PromptRequest):
-        if pipes.blip is None:
+        if blip is None:
             raise HTTPException(
                 status_code=400,
                 detail="BLIP is disabled",
@@ -72,13 +87,20 @@ def get_app(opts):
             raise FileNotFoundError(f"Not Found: {request.path}")
         with path_ii.open("rb") as imgf:
             image = PIL.Image.open(BytesIO(imgf.read())).convert("RGB")
-            prompt: str = pipes.blip.predict(image)
+            prompt: str = blip.predict(image)
         return WebImg2PromptResponse(
             prompt=prompt,
         )
 
     @app.post("/api/generate", response_model=WebResponse)
     def api_generate(request: WebRequest):
+        pipes = name2pipes.get(request.model)
+        if pipes is None:
+            return HTTPException(
+                status_code=400,
+                detail="Unsupported model name",
+            )
+
         try:
             init_image = None
             orig_img_size = None
@@ -152,6 +174,7 @@ def get_app(opts):
         dp = Parameters()
         return Info(
             default_parameters=dp,
+            suppoted_models=list(name2pipes.keys()),
         )
 
     app.mount(
@@ -168,14 +191,7 @@ def get_app(opts):
 
 def get_opts() -> argparse.Namespace:
     oparser = argparse.ArgumentParser()
-    oparser.add_argument(
-        "--model",
-        default="CompVis/stable-diffusion-v1-4",
-    )
-    oparser.add_argument(
-        "--revision",
-        default="fp16",
-    )
+    oparser.add_argument("--model", action="append", required=True)
     oparser.add_argument(
         "--output",
         "-o",

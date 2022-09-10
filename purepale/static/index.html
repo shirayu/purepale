@@ -87,9 +87,20 @@
             </div>
 
             <div class="row">
+                <div class="col-sm-12 col-lg-6">
+                    <select class="form-select me-2" v-model="model_id">
+                        <option v-for="opt in suppoted_models" v-bind:value="opt">
+                            {{ opt }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
 
                 <div class="col-sm-12 col-lg-2">
                     <div class="input-group">
+
                         <label class="input-group-btn">
                             <span class="btn btn-secondary">
                                 <span class="bi bi-image"></span>
@@ -140,10 +151,10 @@
                     </div>
                     <div>
                         <span v-if="result.used_prompt">
-                        {{result.used_prompt}}
+                            {{result.used_prompt}}
                         </span>
                         <span v-else>
-                        {{result.parameters.prompt}}
+                            {{result.parameters.prompt}}
                         </span>
 
 

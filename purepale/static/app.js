@@ -1,5 +1,6 @@
 function get_query(vue) {
   const q = {
+    model: vue.model_id,
     parameters: vue.parameters,
     path_initial_image: vue.path_initial_image,
     initial_image_masks: vue.initial_image_masks,
@@ -34,6 +35,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const vue = new Vue({
     el: "#app",
     data: {
+      model_id: "",
+      suppoted_models: [],
       parameters: {},
       results: [],
       finished: true,
@@ -205,6 +208,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
     .get("/api/info")
     .then((response) => {
       vue.set_default_parameters(response.data["default_parameters"]);
+      for (v of response.data.suppoted_models) {
+        vue.suppoted_models.push(v);
+      }
+      vue.suppoted_models.splice();
+      vue.model_id = vue.suppoted_models[0];
     })
     .catch((error) => {
       alert(`Error: ${error.message}`);
