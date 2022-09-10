@@ -160,6 +160,7 @@ def get_app(opts):
             model=_model,
             revision=_rev,
             path=f"images/{path_outfile.name}",
+            scheduler=pipes.scheduler_param,
             parameters=request.parameters,
             used_prompt=used_prompt,
             used_prompt_tokens=used_prompt_tokens,

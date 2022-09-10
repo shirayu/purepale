@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from typing import List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import PIL
 import PIL.Image
@@ -20,6 +20,10 @@ from purepale.schema import PipesRequest
 
 
 class Pipes:
+    @property
+    def scheduler_param(self) -> Dict[str, Any]:
+        return self.pipe_txt2img.scheduler.config
+
     def __init__(
         self,
         *,

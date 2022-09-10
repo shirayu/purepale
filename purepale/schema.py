@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, validator
 
@@ -48,6 +48,7 @@ class WebResponse(BaseModel):
     model: str
     revision: str
     path: str
+    scheduler: Dict[str, Any]
     parameters: Parameters
     used_prompt: str
     used_prompt_tokens: List[str]
