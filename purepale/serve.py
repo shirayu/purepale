@@ -182,7 +182,7 @@ def get_app(opts):
         dp = Parameters()
         return Info(
             default_parameters=dp,
-            suppoted_models=list(name2pipes.keys()),
+            supported_models=list(name2pipes.keys()),
         )
 
     app.mount(

@@ -65,4 +65,4 @@ class WebImg2PromptResponse(BaseModel):
 
 class Info(BaseModel):
     default_parameters: Parameters
-    suppoted_models: List[str]
+    supported_models: List[str]
