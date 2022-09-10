@@ -7,6 +7,10 @@
 
 A simple web interface of image generations
 
+![Screenshot](https://user-images.githubusercontent.com/963961/189476775-87a4c8b2-8959-4582-8708-7282e30091b2.png)
+
+
+
 ## Setup
 
 ```bash
