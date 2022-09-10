@@ -3,7 +3,7 @@
 import random
 from typing import Final, List
 
-TILEABLE_COMMAND: Final[str] = "--tileable"
+TILEABLE_COMMAND: Final[str] = "--tile"
 REPALCE_COMMAND: Final[str] = "--random"
 
 SET_START: Final[str] = "{"

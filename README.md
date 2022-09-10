@@ -45,7 +45,7 @@ Check full options with ``poetry run python -m purepale.serve -h``.
 
 ## Prompt options
 
-- ``--tileable``: [Make images tileable](https://twitter.com/shirayu/status/1563907466131537920)
+- ``--tile``: [Make images tile](https://twitter.com/shirayu/status/1563907466131537920)
 - ``--random``: Choice words randomly (eg: ``{Girl|Boy} with a {red|blue|green} {hat|box} --random``)
 
 ## Documents
