@@ -153,7 +153,7 @@
                         <span v-if="result.used_prompt">
                             {{result.used_prompt}}
                         </span>
-                        <span v-else>
+                        <span v-else-if="result.parameters && result.parameters.prompt">
                             {{result.parameters.prompt}}
                         </span>
 
