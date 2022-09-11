@@ -130,7 +130,7 @@ def get_app(opts):
                         (mask.a_x, mask.a_y, mask.b_x, mask.b_y),
                         fill=255,
                     )
-                mask_img = mask_img.resize((request.parameters.height, request.parameters.width))
+                mask_img = mask_img.resize((request.parameters.width, request.parameters.height))
 
             if request.parameters.seed is None:
                 request.parameters.seed = random.randint(-9007199254740991, 9007199254740991)
