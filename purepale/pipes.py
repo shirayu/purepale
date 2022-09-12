@@ -155,5 +155,5 @@ class Pipes:
                     eta=request.parameters.eta,
                     generator=generator,
                     **kwargs,
-                )["sample"][0]
+                ).images[0]
         return image, used_prompt
