@@ -71,7 +71,7 @@ def get_app(opts):
     @app.post("/api/upload")
     async def upload(file: UploadFile):
         # TODO: check the file is image
-        name = str(uuid.uuid4())
+        name: str = str(uuid.uuid4())
         outfile_name = f"uploaded__{name}"
         path_outfile: Path = path_out.joinpath(outfile_name)
         with path_outfile.open("wb") as outf:
@@ -155,7 +155,7 @@ def get_app(opts):
         image.save(path_outfile)
 
         used_prompt_tokens, used_prompt_truncated = pipes.tokenize(used_prompt)
-        _model, _rev = name2model_and_revision(name)
+        _model, _rev = name2model_and_revision(request.model)
         resp = WebResponse(
             request=request,
             model=_model,
