@@ -47,6 +47,10 @@ function disable_input(st) {
 
 const canvas_max_height = 250;
 
+window.onbeforeunload = function (e) {
+  e.returnValue = "Do you really want to close window?";
+};
+
 document.addEventListener("DOMContentLoaded", (event) => {
   const vue = new Vue({
     el: "#app",
