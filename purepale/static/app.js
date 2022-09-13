@@ -94,7 +94,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
         const dom_in = document.getElementById("input_prompt");
 
         const query = get_query(this);
-        query.path = "loading.gif";
         disable_input(true);
         this.results.unshift(query);
         this.finished = false;
@@ -109,7 +108,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
             }
           })
           .catch((error) => {
-            this.results[0].path = "/error.png";
+            this.results[0].path = "/error.svg";
             this.results[0].error = error.response.data.detail;
             console.log(error);
           })
