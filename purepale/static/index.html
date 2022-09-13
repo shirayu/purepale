@@ -148,6 +148,7 @@
                         <a v-if="result.path!==undefined" :href="result.path" target="_blank">
                             <img :src="result.path" class="img-fluid w-100">
                         </a>
+                        <img v-else-if="result.error!==undefined" src="/error.svg" class="img-fluid w-100">
                         <img v-else src="loading.svg" class="img-fluid w-100">
                     </div>
                     <div>

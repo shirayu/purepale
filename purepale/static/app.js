@@ -108,7 +108,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
             }
           })
           .catch((error) => {
-            this.results[0].path = "/error.svg";
             this.results[0].error = error.response.data.detail;
             console.log(error);
           })
