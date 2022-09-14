@@ -38,7 +38,7 @@ poetry run python -m purepale.serve -o ~/IMG --port 8000 --model CompVis/stable-
 ```
 
 - ``--model``: You can use multiple models
-- ``--blip``: Enable BLIP (caption model) and save VRAM
+- ``--blip``: Enable BLIP (caption model)
 - ``--slice-size``: Enable attention slicing with given number
 
 Check full options with ``poetry run python -m purepale.serve -h``.
