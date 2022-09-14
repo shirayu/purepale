@@ -47,6 +47,10 @@ function disable_input(st) {
 
 const canvas_max_height = 250;
 
+window.onbeforeunload = function (e) {
+  e.returnValue = "Do you really want to close window?";
+};
+
 document.addEventListener("DOMContentLoaded", (event) => {
   const vue = new Vue({
     el: "#app",
@@ -90,7 +94,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
         const dom_in = document.getElementById("input_prompt");
 
         const query = get_query(this);
-        query.path = "loading.gif";
         disable_input(true);
         this.results.unshift(query);
         this.finished = false;
@@ -105,7 +108,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
             }
           })
           .catch((error) => {
-            this.results[0].path = "/error.png";
             this.results[0].error = error.response.data.detail;
             console.log(error);
           })

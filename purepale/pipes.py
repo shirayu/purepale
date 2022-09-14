@@ -35,7 +35,7 @@ class Pipes:
     ):
         self.device: str = device
 
-        print(f"Loading... {model_id}")
+        print(f"Loading... {model_id} ({revision})")
         self.model_id: str = model_id
         self.revision: str = revision
         kwargs = {}
@@ -155,5 +155,5 @@ class Pipes:
                     eta=request.parameters.eta,
                     generator=generator,
                     **kwargs,
-                )["sample"][0]
+                ).images[0]
         return image, used_prompt

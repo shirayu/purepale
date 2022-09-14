@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import argparse
+import datetime
 import random
 import shutil
 import threading
-import uuid
 from io import BytesIO
 from pathlib import Path
 from typing import List, Optional, Tuple
@@ -68,11 +68,14 @@ def get_app(opts):
     app.mount("/images", StaticFiles(directory=str(path_out)), name="images")
     semaphore = threading.Semaphore(opts.max_process)
 
+    def generate_file_name_preifix() -> str:
+        n: int = random.randint(0, 10000)
+        return datetime.datetime.now().strftime(f"%Y-%m-%d_%H-%M-%S_{n:05}")
+
     @app.post("/api/upload")
     async def upload(file: UploadFile):
-        # TODO: check the file is image
-        name: str = str(uuid.uuid4())
-        outfile_name = f"uploaded__{name}"
+        name: str = generate_file_name_preifix()
+        outfile_name = f"uploaded_{name}{Path(file.filename).suffix}"
         path_outfile: Path = path_out.joinpath(outfile_name)
         with path_outfile.open("wb") as outf:
             shutil.copyfileobj(file.file, outf)
@@ -143,6 +146,7 @@ def get_app(opts):
                         parameters=request.parameters,
                     )
                 )
+                out_name_prefix: str = generate_file_name_preifix()
 
         except Exception as e:
             raise HTTPException(
@@ -150,8 +154,7 @@ def get_app(opts):
                 detail="".join(e.args),
             )
 
-        out_name = str(uuid.uuid4())
-        path_outfile: Path = path_out.joinpath(f"{out_name}.png")
+        path_outfile: Path = path_out.joinpath(f"{out_name_prefix}.png")
         image.save(path_outfile)
 
         used_prompt_tokens, used_prompt_truncated = pipes.tokenize(used_prompt)
@@ -166,7 +169,7 @@ def get_app(opts):
             used_prompt_tokens=used_prompt_tokens,
             used_prompt_truncated=used_prompt_truncated,
         )
-        path_log: Path = path_out.joinpath(f"{out_name}.json")
+        path_log: Path = path_out.joinpath(f"{out_name_prefix}.json")
         with path_log.open("w") as outlogf:
             outlogf.write(
                 resp.json(
