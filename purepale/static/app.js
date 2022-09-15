@@ -121,21 +121,29 @@ document.addEventListener("DOMContentLoaded", (event) => {
           });
       },
       trigger_retry: async function (event) {
-        if (event.target.dataset.replace == "yes") {
+        if (event.target.dataset.replace == "use_as_ii") {
           this.path_initial_image =
             this.results[event.target.dataset.index].path;
           this.ii_prompt = null;
           return;
         }
+
+        this.parameters = deep_copy(
+          this.results[event.target.dataset.index].request.parameters
+        );
+        this.path_initial_image = deep_copy(
+          this.results[event.target.dataset.index].request.path_initial_image
+        );
+        this.initial_image_masks = deep_copy(
+          this.results[event.target.dataset.index].request.initial_image_masks
+        );
+
         if (event.target.dataset.replace == "plus_20_steps") {
-          this.parameters.num_inference_steps =
-            this.results[event.target.dataset.index].request.parameters
-              .num_inference_steps + 20;
-          this.parameters.seed =
-            this.results[event.target.dataset.index].request.parameters.seed;
+          this.model = this.results[event.target.dataset.index].request.model;
+          this.parameters.num_inference_steps += 20;
+        } else {
+          this.parameters.seed = "";
         }
-        this.parameters.prompt =
-          this.results[event.target.dataset.index].request.parameters.prompt;
         this.action();
       },
       paste_output_json: function (event) {

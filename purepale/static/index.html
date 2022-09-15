@@ -164,8 +164,8 @@
                             {{result.error}}
                         </div>
                         <div v-if="finished">
-                            <button class="btn btn-secondary" @click="trigger_retry" :data-index="(row_idx -1)* 4 + col_idx" data-replace="yes">
-                                <span class="bi bi-recycle" :data-index="(row_idx -1)* 4 + col_idx" data-replace="yes"></span>
+                            <button class="btn btn-secondary" @click="trigger_retry" :data-index="(row_idx -1)* 4 + col_idx" data-replace="use_as_ii">
+                                <span class="bi bi-recycle" :data-index="(row_idx -1)* 4 + col_idx" data-replace="use_as_ii"></span>
                             </button>
                             <button class="btn btn-secondary" @click="trigger_retry" :data-index="(row_idx -1)* 4 + col_idx" data-replace="no">
                                 <span class="bi bi-arrow-counterclockwise" :data-index="(row_idx -1)* 4 + col_idx" data-replace="no"></span>
