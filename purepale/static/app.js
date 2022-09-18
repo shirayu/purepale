@@ -144,19 +144,31 @@ document.addEventListener("DOMContentLoaded", (event) => {
       },
       paste_output_json: function (event) {
         const r = deep_copy(this.results[event.target.dataset.index]);
-        delete r.used_prompt;
-        delete r.used_prompt_tokens;
+
+        {
+          delete r.request.parameters.prompt;
+          r.parameters = deep_copy(r.request.parameters);
+
+          r.prompt = r.parsed_prompt.used_prompt;
+          if (r.parsed_prompt.used_prompt_truncated.length > 0) {
+            r.truncated = r.parsed_prompt.used_prompt_truncated;
+          }
+          if (r.parsed_prompt.tileable) {
+            r.tileable = true;
+          }
+          delete r.parsed_prompt;
+        }
+
         delete r.path;
-        if (r.request.initial_image_masks !== null) {
-          r.masked_img2img = true;
-        } else if (r.request.path_initial_image !== null) {
-          r.img2img = true;
+
+        {
+          if (r.request.initial_image_masks !== null) {
+            r.masked_img2img = true;
+          } else if (r.request.path_initial_image !== null) {
+            r.img2img = true;
+          }
         }
-        delete r.request.path_initial_image;
-        delete r.request.initial_image_masks;
-        if (r.parsed_prompt.used_prompt_truncated.length == 0) {
-          delete r.parsed_prompt.used_prompt_truncated;
-        }
+        delete r.request;
         copy_to_clipboard(JSON.stringify(r, undefined, 2));
         alert("Copied JSON to clipbord!");
       },
