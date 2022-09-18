@@ -152,8 +152,14 @@
                         <img v-else src="loading.svg" class="img-fluid w-100">
                     </div>
                     <div>
-                        <span v-if="result.used_prompt">
-                            {{result.used_prompt}}
+                        <span v-if="result.parsed_prompt && result.parsed_prompt.used_prompt">
+                            {{result.parsed_prompt.used_prompt}}
+                            <span v-if="result.parsed_prompt.negative_prompt" class="bg-warning">
+                                --no { {{result.parsed_prompt.negative_prompt}} }
+                            </span>
+                            <span v-if="result.parsed_prompt.tileable" class="bg-warning">
+                                --tile
+                            </span>
                         </span>
                         <span v-else-if="result.parameters && result.parameters.prompt">
                             {{result.parameters.prompt}}

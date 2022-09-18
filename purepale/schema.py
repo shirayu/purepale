@@ -44,15 +44,21 @@ class WebRequest(BaseModel):
         return v
 
 
+class PrasedPrompt(BaseModel):
+    used_prompt: str
+    used_prompt_tokens: List[str]
+    used_prompt_truncated: List[str]
+    negative_prompt: str
+    tileable: bool
+
+
 class WebResponse(BaseModel):
     request: WebRequest
     model: str
     revision: str
     path: str
     scheduler: Dict[str, Any]
-    used_prompt: str
-    used_prompt_tokens: List[str]
-    used_prompt_truncated: List[str]
+    parsed_prompt: PrasedPrompt
 
 
 class WebImg2PromptRequest(BaseModel):

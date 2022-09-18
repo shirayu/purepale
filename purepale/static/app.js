@@ -98,8 +98,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
           .post("/api/generate", query)
           .then((response) => {
             this.results[0] = response.data;
-            if (response.data.used_prompt_truncated.length > 0) {
-              const tp = response.data.used_prompt_truncated;
+            if (response.data.parsed_prompt.used_prompt_truncated.length > 0) {
+              const tp = response.data.parsed_prompt.used_prompt_truncated;
               this.results[0].error = `Truncated prompt: ${tp}`;
             }
           })
@@ -154,8 +154,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
         }
         delete r.request.path_initial_image;
         delete r.request.initial_image_masks;
-        if (r.used_prompt_truncated.length == 0) {
-          delete r.used_prompt_truncated;
+        if (r.parsed_prompt.used_prompt_truncated.length == 0) {
+          delete r.parsed_prompt.used_prompt_truncated;
         }
         copy_to_clipboard(JSON.stringify(r, undefined, 2));
         alert("Copied JSON to clipbord!");

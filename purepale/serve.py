@@ -139,7 +139,7 @@ def get_app(opts):
                 request.parameters.seed = random.randint(-9007199254740991, 9007199254740991)
 
             with semaphore:
-                image, used_prompt = pipes.generate(
+                image, parsed_prompt = pipes.generate(
                     request=PipesRequest(
                         initial_image=init_image,
                         initial_image_mask=mask_img,
@@ -157,7 +157,6 @@ def get_app(opts):
         path_outfile: Path = path_out.joinpath(f"{out_name_prefix}.png")
         image.save(path_outfile)
 
-        used_prompt_tokens, used_prompt_truncated = pipes.tokenize(used_prompt)
         _model, _rev = name2model_and_revision(request.model)
         resp = WebResponse(
             request=request,
@@ -165,9 +164,7 @@ def get_app(opts):
             revision=_rev,
             path=f"images/{path_outfile.name}",
             scheduler=pipes.scheduler_param,
-            used_prompt=used_prompt,
-            used_prompt_tokens=used_prompt_tokens,
-            used_prompt_truncated=used_prompt_truncated,
+            parsed_prompt=parsed_prompt,
         )
         path_log: Path = path_out.joinpath(f"{out_name_prefix}.json")
         with path_log.open("w") as outlogf:

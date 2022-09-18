@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, Tuple
 
 import PIL
 import PIL.Image
@@ -16,7 +16,7 @@ from diffusers import (
 from torch.amp.autocast_mode import autocast
 
 from purepale.prompt import Prompt
-from purepale.schema import PipesRequest
+from purepale.schema import PipesRequest, PrasedPrompt
 
 
 class Pipes:
@@ -99,18 +99,11 @@ class Pipes:
             self.pipe_img2img.safety_checker = lambda images, **kwargs: (images, False)
             self.pipe_masked_img2img.safety_checker = lambda images, **kwargs: (images, False)
 
-    # TODO avoid tokenize twice for generation
-    def tokenize(self, text: str) -> Tuple[List[str], List[str]]:
-        tokens = self.pipe_txt2img.tokenizer.tokenize(
-            text,
-        )
-        return tokens, tokens[self.pipe_txt2img.tokenizer.model_max_length :]
-
     def generate(
         self,
         *,
         request: PipesRequest,
-    ) -> Tuple[PIL.Image.Image, str]:
+    ) -> Tuple[PIL.Image.Image, PrasedPrompt]:
         assert request.parameters.seed is not None
 
         kwargs = {}
@@ -146,14 +139,19 @@ class Pipes:
             generator = torch.cuda.manual_seed(request.parameters.seed)
 
         used_prompt: str = prompt()
+        parsed_prompt = prompt.get_parsed(
+            used_prompt=used_prompt,
+            tokenizer=self.pipe_txt2img.tokenizer,
+        )
         with torch.no_grad():
             with autocast(self.device):
                 image = model(
                     used_prompt,
+                    # negative_prompt=prompt.negative,
                     num_inference_steps=request.parameters.num_inference_steps,
                     guidance_scale=request.parameters.guidance_scale,
                     eta=request.parameters.eta,
                     generator=generator,
                     **kwargs,
                 ).images[0]
-        return image, used_prompt
+        return image, parsed_prompt
