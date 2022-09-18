@@ -6,6 +6,7 @@ import random
 import shutil
 import threading
 from io import BytesIO
+from logging import getLogger
 from pathlib import Path
 from typing import List, Optional, Tuple
 
@@ -31,6 +32,8 @@ from purepale.schema import (
     WebResponse,
 )
 
+logger = getLogger(__name__)
+
 
 def name2model_and_revision(name: str) -> Tuple[str, str]:
     _items: List[str] = name.split("/")
@@ -49,8 +52,9 @@ def get_app(opts):
 
     blip: Optional[BLIP] = None
     if opts.blip:
-        print("Loading... BIIP")
+        logger.info("Loading BIIP")
         blip = BLIP(device)
+        logger.info("Finished loading of BIIP")
 
     name2pipes = {}
     for name in opts.model:

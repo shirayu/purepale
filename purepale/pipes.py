@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from logging import getLogger
 from typing import Any, Dict, Tuple
 
 import PIL
@@ -18,6 +19,8 @@ from torch.amp.autocast_mode import autocast
 from purepale.prompt import Prompt
 from purepale.schema import PipesRequest, PrasedPrompt
 
+logger = getLogger(__name__)
+
 
 class Pipes:
     @property
@@ -35,7 +38,7 @@ class Pipes:
     ):
         self.device: str = device
 
-        print(f"Loading... {model_id} ({revision})")
+        logger.info(f"Loading {model_id} ({revision})")
         self.model_id: str = model_id
         self.revision: str = revision
         kwargs = {}
@@ -47,6 +50,7 @@ class Pipes:
                 clip_sample=False,
                 set_alpha_to_one=False,
             )
+        logger.info(f"Finished loading of {model_id} ({revision})")
 
         self.pipe_txt2img = StableDiffusionPipeline.from_pretrained(
             model_id,
