@@ -24,7 +24,7 @@ from purepale.blip import BLIP
 from purepale.pipes import Pipes
 from purepale.schema import (
     Info,
-    ModelName,
+    ModelConfig,
     Parameters,
     PipesRequest,
     WebImg2PromptRequest,
@@ -51,7 +51,7 @@ def get_app(opts):
     name2pipes = {}
     for name in opts.model:
         _pipes = Pipes(
-            model_name=ModelName.parse(name),
+            model_config=ModelConfig.parse(name),
             device=device,
             nosafety=opts.no_safety,
             slice_size=opts.slice_size,
@@ -153,7 +153,7 @@ def get_app(opts):
 
         resp = WebResponse(
             request=request,
-            model_name=ModelName.parse(name),
+            model=ModelConfig.parse(name),
             path=f"images/{path_outfile.name}",
             scheduler=pipes.scheduler_param,
             parsed_prompt=parsed_prompt,

@@ -17,7 +17,7 @@ from diffusers import (
 from torch.amp.autocast_mode import autocast
 
 from purepale.prompt import Prompt
-from purepale.schema import ModelName, PipesRequest, PrasedPrompt
+from purepale.schema import ModelConfig, PipesRequest, PrasedPrompt
 
 logger = getLogger(__name__)
 
@@ -30,16 +30,16 @@ class Pipes:
     def __init__(
         self,
         *,
-        model_name: ModelName,
+        model_config: ModelConfig,
         device: str,
         nosafety: bool,
         slice_size: int,
     ):
         self.device: str = device
 
-        logger.info(f"Loading {model_name})")
-        model_id: str = model_name.model_id
-        revision: str = model_name.revision
+        logger.info(f"Loading {model_config})")
+        model_id: str = model_config.model_id
+        revision: str = model_config.revision
         kwargs = {}
         if model_id == "hakurei/waifu-diffusion":
             kwargs["scheduler"] = DDIMScheduler(
@@ -49,12 +49,12 @@ class Pipes:
                 clip_sample=False,
                 set_alpha_to_one=False,
             )
-        logger.info(f"Finished loading of {model_name}")
+        logger.info(f"Finished loading of {model_config}")
 
         self.pipe_txt2img = StableDiffusionPipeline.from_pretrained(
             model_id,
             revision=revision,
-            torch_dtype=torch.float16 if model_name.dtype == "fp16" else torch.float32,
+            torch_dtype=torch.float16 if model_config.dtype == "fp16" else torch.float32,
             use_auth_token=True,
             **kwargs,
         ).to(device)

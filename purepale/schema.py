@@ -5,13 +5,13 @@ from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel, validator
 
 
-class ModelName(BaseModel):
+class ModelConfig(BaseModel):
     model_id: str
     revision: str
     dtype: Literal["fp16", "fp32"]
 
     @staticmethod
-    def parse(query: str) -> "ModelName":
+    def parse(query: str) -> "ModelConfig":
         r_at: int = query.rfind("@")
         dtype: Literal["fp16", "fp32"] = "fp16"
         if r_at >= 0:
@@ -26,7 +26,7 @@ class ModelName(BaseModel):
             revision = _items[2]
         model_id = "/".join(_items[:2])
 
-        return ModelName(
+        return ModelConfig(
             model_id=model_id,
             revision=revision,
             dtype=dtype,
@@ -82,7 +82,7 @@ class PrasedPrompt(BaseModel):
 
 class WebResponse(BaseModel):
     request: WebRequest
-    model_name: ModelName
+    model: ModelConfig
     path: str
     scheduler: Dict[str, Any]
     parsed_prompt: PrasedPrompt
