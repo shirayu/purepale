@@ -32,15 +32,11 @@ function get_query(vue) {
 }
 
 function disable_input(st) {
-  const inputs = document.getElementsByTagName("input");
+  const inputs = document.querySelectorAll("input,textarea,select,button");
   for (const inp of inputs) {
     if (inp.id == "control_repeat") {
       continue;
     }
-    inp.disabled = st;
-  }
-  const buttons = document.getElementsByTagName("button");
-  for (const inp of buttons) {
     inp.disabled = st;
   }
 }
