@@ -8,7 +8,7 @@ import threading
 from io import BytesIO
 from logging import getLogger
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Optional
 
 import PIL
 import PIL.Image
@@ -24,6 +24,7 @@ from purepale.blip import BLIP
 from purepale.pipes import Pipes
 from purepale.schema import (
     Info,
+    ModelName,
     Parameters,
     PipesRequest,
     WebImg2PromptRequest,
@@ -33,15 +34,6 @@ from purepale.schema import (
 )
 
 logger = getLogger(__name__)
-
-
-def name2model_and_revision(name: str) -> Tuple[str, str]:
-    _items: List[str] = name.split("/")
-    assert 2 <= len(_items) <= 3
-    revision: str = "main"
-    if len(_items) == 3:
-        revision = _items[2]
-    return "/".join(_items[:2]), revision
 
 
 def get_app(opts):
@@ -58,10 +50,8 @@ def get_app(opts):
 
     name2pipes = {}
     for name in opts.model:
-        _model, _rev = name2model_and_revision(name)
         _pipes = Pipes(
-            model_id=_model,
-            revision=_rev,
+            model_name=ModelName.parse(name),
             device=device,
             nosafety=opts.no_safety,
             slice_size=opts.slice_size,
@@ -161,11 +151,9 @@ def get_app(opts):
         path_outfile: Path = path_out.joinpath(f"{out_name_prefix}.png")
         image.save(path_outfile)
 
-        _model, _rev = name2model_and_revision(request.model)
         resp = WebResponse(
             request=request,
-            model=_model,
-            revision=_rev,
+            model_name=ModelName.parse(name),
             path=f"images/{path_outfile.name}",
             scheduler=pipes.scheduler_param,
             parsed_prompt=parsed_prompt,

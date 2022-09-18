@@ -1,8 +1,36 @@
 #!/usr/bin/env python3
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, validator
+
+
+class ModelName(BaseModel):
+    model_id: str
+    revision: str
+    dtype: Literal["fp16", "fp32"]
+
+    @staticmethod
+    def parse(query: str) -> "ModelName":
+        r_at: int = query.rfind("@")
+        dtype: Literal["fp16", "fp32"] = "fp16"
+        if r_at >= 0:
+            v: str = query[r_at + 1 :]
+            assert v == "fp16" or v == "fp32", f"`{v}` is not acceptable"
+            dtype: Literal["fp16", "fp32"] = v
+            query = query[:r_at]
+        _items: List[str] = query.split("/")
+        assert 2 <= len(_items) <= 3
+        revision: str = "main"
+        if len(_items) == 3:
+            revision = _items[2]
+        model_id = "/".join(_items[:2])
+
+        return ModelName(
+            model_id=model_id,
+            revision=revision,
+            dtype=dtype,
+        )
 
 
 class Parameters(BaseModel):
@@ -54,8 +82,7 @@ class PrasedPrompt(BaseModel):
 
 class WebResponse(BaseModel):
     request: WebRequest
-    model: str
-    revision: str
+    model_name: ModelName
     path: str
     scheduler: Dict[str, Any]
     parsed_prompt: PrasedPrompt
