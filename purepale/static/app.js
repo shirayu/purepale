@@ -14,12 +14,38 @@ function copy_to_clipboard(text) {
   document.execCommand("copy");
   textarea.parentNode.removeChild(textarea);
 }
-function get_query(vue) {
+async function get_query(vue) {
+  const canvas_draw = document.getElementById("canvas_ii_mask_draw");
+  if (
+    vue.path_initial_image_mask === null ||
+    parseInt(canvas_draw.dataset.changed) == 1
+  ) {
+    //sent mask image
+    canvas_draw.dataset.changed = 0;
+    const blob = await new Promise((resolve) => canvas_draw.toBlob(resolve));
+
+    const formData = new FormData();
+    formData.append("file", blob, "mask.png");
+    const request = new Request("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+    await fetch(request)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        vue.path_initial_image_mask = data.path;
+      });
+  }
+
+  console.assert(vue.path_initial_image_mask !== null);
+
   const q = {
     model: deep_copy(vue.model_id),
     parameters: deep_copy(vue.parameters),
     path_initial_image: deep_copy(vue.path_initial_image),
-    initial_image_masks: deep_copy(vue.initial_image_masks),
+    path_initial_image_mask: deep_copy(vue.path_initial_image_mask),
   };
   if (typeof q.parameters.seed === "string") {
     if (q.parameters.seed.trim().length == 0) {
@@ -41,7 +67,7 @@ function disable_input(st) {
   }
 }
 
-const canvas_max_height = 250;
+const canvas_max_height = 500;
 
 window.onbeforeunload = function (e) {
   e.returnValue = "Do you really want to close window?";
@@ -61,8 +87,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
       ii_prompt: null,
 
       use_image_mask: false,
-      click_point0: null,
-      initial_image_masks: null,
+      path_initial_image_mask: null,
     },
     methods: {
       set_default_parameters: function (dparams) {
@@ -89,7 +114,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
       action: async function () {
         const dom_in = document.getElementById("input_prompt");
 
-        const query = get_query(this);
+        const query = await get_query(this);
         disable_input(true);
         this.results.unshift(query);
         this.finished = false;
@@ -130,8 +155,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
         this.path_initial_image = deep_copy(
           this.results[event.target.dataset.index].request.path_initial_image
         );
-        this.initial_image_masks = deep_copy(
-          this.results[event.target.dataset.index].request.initial_image_masks
+        this.path_initial_image_mask = deep_copy(
+          this.results[event.target.dataset.index].request
+            .path_initial_image_mask
         );
 
         if (event.target.dataset.replace == "plus_20_steps") {
@@ -162,7 +188,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         delete r.path;
 
         {
-          if (r.request.initial_image_masks !== null) {
+          if (r.request.path_initial_image_mask !== null) {
             r.masked_img2img = true;
           } else if (r.request.path_initial_image !== null) {
             r.img2img = true;
@@ -189,51 +215,71 @@ document.addEventListener("DOMContentLoaded", (event) => {
       },
 
       initialize_mask: function () {
-        this.initial_image_masks = [];
         const orig_img = new Image();
         orig_img.src = this.path_initial_image;
         orig_img.addEventListener("load", () => {
-          const canvas = document.getElementById("canvas_ii_mask");
-          canvas.width = orig_img.width;
-          canvas.height = orig_img.height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(orig_img, 0, 0);
-          this.canvas_scale = canvas.height / canvas_max_height;
-          canvas.style.width = orig_img.width / this.canvas_scale + "px";
-          canvas.style.height = orig_img.height / this.canvas_scale + "px";
+          //base canvas
+          const canvas_base = document.getElementById("canvas_ii_mask_base");
+          canvas_base.width = orig_img.width;
+          canvas_base.height = orig_img.height;
+          const ctx_base = canvas_base.getContext("2d");
+          ctx_base.drawImage(orig_img, 0, 0);
+          const canvas_scale = (canvas_base.height / canvas_max_height) * 2;
+          canvas_base.style.width = orig_img.width / canvas_scale + "px";
+          canvas_base.style.height = orig_img.height / canvas_scale + "px";
 
-          canvas.addEventListener("click", (event) => {
-            const rect = event.target.getBoundingClientRect();
-            const x = (event.clientX - rect.left) * this.canvas_scale;
-            const y = (event.clientY - rect.top) * this.canvas_scale;
-            if (this.click_point0 !== null) {
-              const pA = this.click_point0;
-              const pB = [x, y];
-              if (pA[0] > pB[0]) {
-                //swap
-                const tmp = pA[0];
-                pA[0] = pB[0];
-                pB[0] = tmp;
-              }
-              if (pA[1] > pB[1]) {
-                //swap
-                const tmp = pA[1];
-                pA[1] = pB[1];
-                pB[1] = tmp;
-              }
+          //draw canvas
+          const canvas_draw = document.getElementById("canvas_ii_mask_draw");
+          canvas_draw.width = canvas_base.width;
+          canvas_draw.height = canvas_base.height;
+          canvas_draw.style.width = canvas_base.style.width;
+          canvas_draw.style.height = canvas_base.style.height;
 
-              ctx.fillRect(pA[0], pA[1], pB[0] - pA[0], pB[1] - pA[1]);
-              this.click_point0 = null;
-              this.initial_image_masks.push({
-                a_x: pA[0],
-                a_y: pA[1],
-                b_x: pB[0],
-                b_y: pB[1],
-              });
-            } else {
-              this.click_point0 = [x, y];
-            }
+          const ctx_draw = canvas_draw.getContext("2d");
+          ctx_draw.lineWidth = 10;
+          const input_lw = document.getElementById("canvas_ii_mask_line_width");
+          input_lw.addEventListener("change", (e) => {
+            ctx_draw.lineWidth = parseInt(e.target.value);
           });
+          input_lw.value = ctx_draw.lineWidth;
+
+          ctx_draw.globalCompositeOperation = "source-over";
+          ctx_draw.strokeStyle = "black";
+          const object = { handleEvent: DrawWithMouse };
+
+          let draw_started = false;
+          canvas_draw.addEventListener("mousedown", drawStart);
+          canvas_draw.addEventListener("mouseout", drawEnd);
+          canvas_draw.addEventListener("mouseup", drawEnd);
+          function draw(x, y) {
+            if (draw_started) {
+              draw_started = false;
+              canvas_draw.dataset.changed = 1;
+              ctx_draw.beginPath();
+              ctx_draw.moveTo(x, y);
+            } else {
+              ctx_draw.lineTo(x, y);
+            }
+            ctx_draw.stroke();
+          }
+
+          function drawStart() {
+            draw_started = true;
+            canvas_draw.addEventListener("mousemove", object);
+          }
+
+          function drawEnd() {
+            draw_started = false;
+            ctx_draw.closePath();
+            canvas_draw.removeEventListener("mousemove", object);
+          }
+
+          function DrawWithMouse(event) {
+            const rect = event.currentTarget.getBoundingClientRect();
+            const x = (event.clientX - rect.left) * canvas_scale;
+            const y = (event.clientY - rect.top) * canvas_scale;
+            draw(x, y);
+          }
         });
       },
     },
@@ -243,7 +289,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         if (new_val) {
           this.initialize_mask();
         } else {
-          this.initial_image_masks = null;
+          this.path_initial_image_mask = null;
         }
       },
       path_initial_image: function () {

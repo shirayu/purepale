@@ -12,6 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js" integrity="sha384-t1tHLsbM7bYMJCXlhr0//00jSs7ZhsAhxgm191xFsyzvieTMCbUWKMhFg9I6ci8q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios@0.27.1/dist/axios.min.js" integrity="sha256-maFJaLqGCR09LmHMGRFqC++MMfQGU+K+CUC3U2NBB/M=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" integrity="sha384-xeJqLiuOvjUBq3iGOjvSQSIlwrpqjSHXpduPd6rQpuiM3f5/ijby8pCsnbu5S81n" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
     <script src="app.js"></script>
 </head>
 
@@ -87,7 +88,7 @@
             </div>
 
             <div class="row">
-                <div class="col-sm-12 col-lg-6">
+                <div class="col-lg-6">
                     <select class="form-select me-2" v-model="model_id">
                         <option v-for="opt in supported_models" v-bind:value="opt">
                             {{ opt }}
@@ -98,43 +99,52 @@
 
             <div class="row">
 
-                <div class="col-sm-12 col-lg-2">
+                <div class="col-lg-4">
                     <div class="input-group">
-
                         <label class="input-group-btn">
                             <span class="btn btn-secondary">
                                 <span class="bi bi-image"></span>
                                 <input type="file" style="display:none" class="uploadFile" id="file_input_initial_image">
                             </span>
                         </label>
+                        <button v-if="path_initial_image" class="ms-1 btn btn-secondary" @click="action_img2prompt" v-if="ii_prompt===null">
+                            <span class="bi bi-card-text"></span>
+                        </button>
+                        <button v-if="path_initial_image" id="button_ii_clear" type="button" class="ms-1 btn btn-secondary" v-on:click="clear_path_initial_image()">
+                            <span class="bi bi-trash"></span>
+                        </button>
+                    </div>
+                    <div v-if="path_initial_image">
+                        <div>
+                            <img :src="path_initial_image" id="img_init_image_preview" alt="Initial image" class="img-fluid w-100">
+                        </div>
+
+                        <div id="img2prompt-result">{{ii_prompt}}</div>
                     </div>
                 </div>
-                <div class="col-sm-12 col-lg-2" v-if="path_initial_image">
-                    <div>
-                        <img :src="path_initial_image" id="img_init_image_preview" alt="Initial image" class="img-fluid w-100">
-                    </div>
-                    <button class="ms-1 btn btn-secondary" @click="action_img2prompt" v-if="ii_prompt===null">
-                        <span class="bi bi-card-text"></span>
-                    </button>
-                    <button id="button_ii_clear" type="button" class="ms-1 btn btn-secondary" v-on:click="clear_path_initial_image()">
-                        <span class="bi bi-trash"></span>
-                    </button>
-                    <div id="img2prompt-result">{{ii_prompt}}</div>
-                </div>
-                <div class="col-sm-12 col-lg-2" v-if="path_initial_image">
+
+
+                <div class="col-lg-2" v-if="path_initial_image">
                     <div class="input-group">
                         <span class="input-group-text">Strength</span>
                         <input class="form-control" id="input_strength" type="number" v-model="parameters.strength" step="0.1" min="0" max="1" @keydown.enter="trigger">
                     </div>
                 </div>
-                <div class="col-sm-2 col-lg-2" v-if="path_initial_image">
+                <div class="col-lg-2" v-if="path_initial_image">
                     <div class="form-check">
                         <input class="form-check-input" id="control_use_image_mask" type="checkbox" v-model="use_image_mask">
                         <label class="form-check-label" for="control_use_image_mask">Mask</label>
                     </div>
+                    <div v-if='use_image_mask' class="input-group">
+                        <span class="input-group-text">Px</span>
+                        <input class="form-control" id="canvas_ii_mask_line_width" type="number" value="5" step="1" min="1" max="100">
+                    </div>
                 </div>
-                <div class="col-sm-10 col-lg-2" v-if="path_initial_image">
-                    <canvas v-if="use_image_mask" id="canvas_ii_mask"></canvas>
+                <div class="col-lg-4" v-if="path_initial_image">
+                    <div v-if="use_image_mask" class="canvas-wrap" id="use_image_mask_wrap">
+                        <canvas class="canvas" id="canvas_ii_mask_base"></canvas>
+                        <canvas class="canvas" id="canvas_ii_mask_draw"></canvas>
+                    </div>
                 </div>
 
             </div>

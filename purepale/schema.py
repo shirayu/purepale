@@ -46,13 +46,6 @@ class Parameters(BaseModel):
     seed: Optional[int] = None
 
 
-class ImageMask(BaseModel):
-    a_x: int
-    a_y: int
-    b_x: int
-    b_y: int
-
-
 class PipesRequest(BaseModel):
     initial_image: Optional[Any] = None
     initial_image_mask: Optional[Any] = None
@@ -62,10 +55,10 @@ class PipesRequest(BaseModel):
 class WebRequest(BaseModel):
     model: str
     path_initial_image: Optional[str] = None
-    initial_image_masks: Optional[List[ImageMask]] = None
+    path_initial_image_mask: Optional[str] = None
     parameters: Parameters = Parameters()
 
-    @validator("initial_image_masks")
+    @validator("path_initial_image_mask")
     def mask(cls, v, values, **kwargs):
         if v is not None and values["path_initial_image"] is None:
             raise ValueError("Mask should be with original image")

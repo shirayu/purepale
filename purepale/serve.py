@@ -13,6 +13,7 @@ from typing import Optional
 import PIL
 import PIL.Image
 import PIL.ImageDraw
+import PIL.ImageOps
 import torch
 import torch.backends.cudnn
 import uvicorn
@@ -104,29 +105,27 @@ def get_app(opts):
 
         try:
             init_image = None
-            orig_img_size = None
             if request.path_initial_image:
-                path_ii: Optional[Path] = None
-                path_ii = path_out.joinpath(Path(request.path_initial_image).name)
+                path_ii: Path = path_out.joinpath(Path(request.path_initial_image).name)
                 if not path_ii.exists():
                     raise FileNotFoundError(f"Not Found: {request.path_initial_image}")
                 with path_ii.open("rb") as imgf:
                     init_image = PIL.Image.open(BytesIO(imgf.read())).convert("RGB")
-                    orig_img_size = init_image.size[:]
                 init_image = init_image.resize((request.parameters.width, request.parameters.height))
 
             mask_img = None
-            if request.initial_image_masks is not None:
-                path_ii: Optional[Path] = None
-                # TODO: Make StableDiffusionInpaintingPipeline accept mask info directly
-                assert orig_img_size is not None
-                mask_img = PIL.Image.new("L", orig_img_size, 0)
-                draw = PIL.ImageDraw.Draw(mask_img)
-                for mask in request.initial_image_masks:
-                    draw.rectangle(
-                        (mask.a_x, mask.a_y, mask.b_x, mask.b_y),
-                        fill=255,
-                    )
+            if request.path_initial_image_mask is not None:
+                path_ii_mask: Path = path_out.joinpath(Path(request.path_initial_image_mask).name)
+                if not path_ii_mask.exists():
+                    raise FileNotFoundError(f"Not Found: {request.path_initial_image}")
+                with path_ii_mask.open("rb") as imgf:
+                    im = PIL.Image.open(BytesIO(imgf.read()))
+                    if im.mode == "RGBA":
+                        _, _, _, a = im.split()
+                        im = PIL.Image.merge("RGB", (a, a, a))
+                    else:
+                        im = PIL.ImageOps.invert(im)
+                    mask_img = im.convert("L")
                 mask_img = mask_img.resize((request.parameters.width, request.parameters.height))
 
             if request.parameters.seed is None:
