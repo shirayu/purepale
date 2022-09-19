@@ -17,8 +17,11 @@ function copy_to_clipboard(text) {
 async function get_query(vue) {
   const canvas_draw = document.getElementById("canvas_ii_mask_draw");
   if (
-    vue.path_initial_image_mask === null ||
-    parseInt(canvas_draw.dataset.changed) == 1
+    vue.use_image_mask &&
+    canvas_draw !== undefined &&
+    canvas_draw.dataset !== undefined &&
+    (vue.path_initial_image_mask === null ||
+      parseInt(canvas_draw.dataset.changed) == 1)
   ) {
     //sent mask image
     canvas_draw.dataset.changed = 0;
@@ -38,8 +41,6 @@ async function get_query(vue) {
         vue.path_initial_image_mask = data.path;
       });
   }
-
-  console.assert(vue.path_initial_image_mask !== null);
 
   const q = {
     model: deep_copy(vue.model_id),
