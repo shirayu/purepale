@@ -39,7 +39,6 @@ class Pipes:
 
         logger.info(f"Loading {model_config})")
         model_id: str = model_config.model_id
-        revision: str = model_config.revision
         kwargs = {}
         if model_id == "hakurei/waifu-diffusion":
             kwargs["scheduler"] = DDIMScheduler(
@@ -53,7 +52,7 @@ class Pipes:
 
         self.pipe_txt2img = StableDiffusionPipeline.from_pretrained(
             model_id,
-            revision=revision,
+            revision=model_config.revision,
             torch_dtype=torch.float16 if model_config.dtype == "fp16" else torch.float32,
             use_auth_token=True,
             **kwargs,

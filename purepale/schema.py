@@ -7,7 +7,7 @@ from pydantic import BaseModel, validator
 
 class ModelConfig(BaseModel):
     model_id: str
-    revision: str
+    revision: Optional[str] = None
     dtype: Literal["fp16", "fp32"]
 
     @staticmethod
@@ -20,11 +20,14 @@ class ModelConfig(BaseModel):
             dtype: Literal["fp16", "fp32"] = v
             query = query[:r_at]
         _items: List[str] = query.split("/")
-        assert 2 <= len(_items) <= 3
-        revision: str = "main"
-        if len(_items) == 3:
-            revision = _items[2]
-        model_id = "/".join(_items[:2])
+        revision = None
+        if len(_items) == 1:
+            model_id: str = _items[0]
+        else:
+            assert 2 <= len(_items) <= 3
+            if len(_items) == 3:
+                revision = _items[2]
+            model_id = "/".join(_items[:2])
 
         return ModelConfig(
             model_id=model_id,
