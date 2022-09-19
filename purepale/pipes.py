@@ -40,7 +40,7 @@ class Pipes:
         logger.info(f"Loading {model_config})")
         model_id: str = model_config.model_id
         kwargs = {}
-        if model_id == "hakurei/waifu-diffusion":
+        if not model_id.startswith("CompVis/"):
             kwargs["scheduler"] = DDIMScheduler(
                 beta_start=0.00085,
                 beta_end=0.012,
