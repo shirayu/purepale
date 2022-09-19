@@ -236,6 +236,7 @@ def get_opts() -> argparse.Namespace:
         action="append",
         type=FEATURES,
         help="Enable BILP",
+        default=[],
         choices=list(FEATURES),
     )
     oparser.add_argument(
