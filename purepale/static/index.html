@@ -176,9 +176,7 @@
                         </span>
 
 
-                        <div v-if="result.error" class="alert alert-danger" role="alert">
-                            {{result.error}}
-                        </div>
+                        <div v-if="result.error" class="alert alert-danger" role="alert" style="white-space: pre-wrap;">{{result.error}}</div>
                         <div v-if="finished">
                             <button class="btn btn-secondary" @click="trigger_retry" :data-index="(row_idx -1)* 4 + col_idx" data-replace="use_as_ii">
                                 <span class="bi bi-recycle" :data-index="(row_idx -1)* 4 + col_idx" data-replace="use_as_ii"></span>

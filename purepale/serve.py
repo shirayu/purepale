@@ -7,6 +7,7 @@ import logging
 import random
 import shutil
 import threading
+import traceback
 from io import BytesIO
 from pathlib import Path
 from typing import Optional
@@ -150,9 +151,10 @@ def get_app(opts):
                 out_name_prefix: str = generate_file_name_preifix()
 
         except Exception as e:
+            tr: str = "\n".join(list(traceback.TracebackException.from_exception(e).format()))
             raise HTTPException(
                 status_code=400,
-                detail="".join(e.args),
+                detail="".join(e.args) + "\n" + tr,
             )
 
         path_outfile: Path = path_out.joinpath(f"{out_name_prefix}.png")
