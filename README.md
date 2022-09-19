@@ -40,7 +40,7 @@ poetry run python -m purepale.serve -o ~/IMG --port 8000 --model CompVis/stable-
 - ``--model``: You can use multiple models
     - Format: ``org_name/model_name/revision@dtype`` (eg. ``naclbit/trinart_stable_diffusion_v2/diffusers-60k@fp16``)
     - ``revision`` and ``dtype`` can be omitted
-- ``--blip``: Enable BLIP (caption model)
+- ``--feature blip``: Enable BLIP (caption model)
 - ``--slice-size``: Enable attention slicing with given number
 
 Check full options with ``poetry run python -m purepale.serve -h``.

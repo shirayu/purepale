@@ -97,7 +97,7 @@ develop = false
 
 [package.dependencies]
 filelock = "*"
-huggingface-hub = ">=0.8.1"
+huggingface-hub = ">=0.9.1"
 importlib_metadata = "*"
 numpy = "*"
 Pillow = "*"

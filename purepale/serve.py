@@ -2,11 +2,12 @@
 
 import argparse
 import datetime
+import enum
+import logging
 import random
 import shutil
 import threading
 from io import BytesIO
-from logging import getLogger
 from pathlib import Path
 from typing import Optional
 
@@ -34,7 +35,13 @@ from purepale.schema import (
     WebResponse,
 )
 
-logger = getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+@enum.unique
+class FEATURES(enum.Enum):
+    blip = "blip"
 
 
 def get_app(opts):
@@ -43,10 +50,11 @@ def get_app(opts):
 
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
 
-    blip: Optional[BLIP] = None
-    if opts.blip:
+    model_blip: Optional[BLIP] = None
+    logger.info(f"Features: {[v.value for v in opts.feature]}")
+    if FEATURES.blip in opts.feature:
         logger.info("Loading BIIP")
-        blip = BLIP(device)
+        model_blip = BLIP(device)
         logger.info("Finished loading of BIIP")
 
     name2pipes = {}
@@ -78,7 +86,7 @@ def get_app(opts):
 
     @app.post("/api/img2prompt", response_model=WebImg2PromptResponse)
     def api_img2prompt(request: WebImg2PromptRequest):
-        if blip is None:
+        if model_blip is None:
             raise HTTPException(
                 status_code=400,
                 detail="BLIP is disabled",
@@ -89,7 +97,7 @@ def get_app(opts):
             raise FileNotFoundError(f"Not Found: {request.path}")
         with path_ii.open("rb") as imgf:
             image = PIL.Image.open(BytesIO(imgf.read())).convert("RGB")
-            prompt: str = blip.predict(image)
+            prompt: str = model_blip.predict(image)
         return WebImg2PromptResponse(
             prompt=prompt,
         )
@@ -223,9 +231,12 @@ def get_opts() -> argparse.Namespace:
         help="Disable safety_checker with your responsibility",
     )
     oparser.add_argument(
-        "--blip",
-        action="store_true",
+        "--feature",
+        "-f",
+        action="append",
+        type=FEATURES,
         help="Enable BILP",
+        choices=list(FEATURES),
     )
     oparser.add_argument(
         "--slice-size",
