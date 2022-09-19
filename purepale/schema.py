@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
 
+import enum
 from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, validator
+
+
+@enum.unique
+class PurepaleFeatures(enum.Enum):
+    blip = "blip"
+    negative = "negative"  # currently this needs to modify diffusers
 
 
 class ModelConfig(BaseModel):

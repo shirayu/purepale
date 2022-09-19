@@ -2,7 +2,6 @@
 
 import argparse
 import datetime
-import enum
 import logging
 import random
 import shutil
@@ -30,6 +29,7 @@ from purepale.schema import (
     ModelConfig,
     Parameters,
     PipesRequest,
+    PurepaleFeatures,
     WebImg2PromptRequest,
     WebImg2PromptResponse,
     WebRequest,
@@ -40,11 +40,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-@enum.unique
-class FEATURES(enum.Enum):
-    blip = "blip"
-
-
 def get_app(opts):
     path_out: Path = opts.output
     path_out.mkdir(exist_ok=True, parents=True)
@@ -53,7 +48,7 @@ def get_app(opts):
 
     model_blip: Optional[BLIP] = None
     logger.info(f"Features: {[v.value for v in opts.feature]}")
-    if FEATURES.blip in opts.feature:
+    if PurepaleFeatures.blip in opts.feature:
         logger.info("Loading BIIP")
         model_blip = BLIP(device)
         logger.info("Finished loading of BIIP")
@@ -66,6 +61,8 @@ def get_app(opts):
             nosafety=opts.no_safety,
             slice_size=opts.slice_size,
         )
+        if PurepaleFeatures.negative in opts.feature:
+            _pipes.feature_egative_prompt = True
         name2pipes[name] = _pipes
 
     app = FastAPI()
@@ -236,10 +233,10 @@ def get_opts() -> argparse.Namespace:
         "--feature",
         "-f",
         action="append",
-        type=FEATURES,
+        type=PurepaleFeatures,
         help="Enable BILP",
         default=[],
-        choices=list(FEATURES),
+        choices=list(PurepaleFeatures),
     )
     oparser.add_argument(
         "--slice-size",

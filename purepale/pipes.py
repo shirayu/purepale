@@ -36,6 +36,7 @@ class Pipes:
         slice_size: int,
     ):
         self.device: str = device
+        self.feature_egative_prompt: bool = False
 
         logger.info(f"Loading {model_config})")
         model_id: str = model_config.model_id
@@ -145,11 +146,13 @@ class Pipes:
             used_prompt=used_prompt,
             tokenizer=self.pipe_txt2img.tokenizer,
         )
+        if self.feature_egative_prompt:
+            kwargs["negative_prompt"] = prompt.negative
+
         with torch.no_grad():
             with autocast(self.device):
                 image = model(
                     used_prompt,
-                    # negative_prompt=prompt.negative,
                     num_inference_steps=request.parameters.num_inference_steps,
                     guidance_scale=request.parameters.guidance_scale,
                     eta=request.parameters.eta,
