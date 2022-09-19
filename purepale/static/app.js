@@ -131,13 +131,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
           })
           .catch((error) => {
             this.results[0].error = error.response.data.detail;
+            this.contorol_repeat = false;
             console.log(error);
           })
           .finally(() => {
             this.finished = true;
             this.results.splice();
             disable_input(false);
-            if (this.results[0].error === undefined && this.contorol_repeat) {
+            if (this.contorol_repeat) {
               this.action();
             }
           });
