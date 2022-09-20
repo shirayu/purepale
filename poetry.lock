@@ -116,8 +116,8 @@ training = ["accelerate", "datasets", "modelcards", "tensorboard"]
 [package.source]
 type = "git"
 url = "https://github.com/huggingface/diffusers"
-reference = "429dace10a356a776f935fc11e16d5b321b496f3"
-resolved_reference = "429dace10a356a776f935fc11e16d5b321b496f3"
+reference = "0902449ef82d8f1700643ae65b20316519ac20ec"
+resolved_reference = "0902449ef82d8f1700643ae65b20316519ac20ec"
 
 [[package]]
 name = "fairscale"
@@ -706,7 +706,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.12"
-content-hash = "35ad910c3fb69b1046d03040a24b4e204651ba2bfdd2de932d526fc830fdeb75"
+content-hash = "f1e653a459c6d988a4302fec0d5f74c1bb92b30f2599d0d2e578bb117a7d6bff"
 
 [metadata.files]
 anyio = [
