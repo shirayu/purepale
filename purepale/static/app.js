@@ -194,6 +194,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
             r.masked_img2img = true;
           } else if (r.request.path_initial_image !== null) {
             r.img2img = true;
+          } else {
+            delete r.parameters.strength;
           }
         }
         delete r.request;
