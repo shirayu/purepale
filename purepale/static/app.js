@@ -75,9 +75,8 @@ window.onbeforeunload = function (e) {
 };
 
 document.addEventListener("DOMContentLoaded", (event) => {
-  const vue = new Vue({
-    el: "#app",
-    data: {
+  const vue = Vue.createApp({
+    data: () => ({
       model_id: "",
       supported_models: [],
       parameters: {},
@@ -89,7 +88,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
       use_image_mask: false,
       path_initial_image_mask: null,
-    },
+    }),
 
     watch: {
       use_image_mask: function (new_val) {
@@ -106,7 +105,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     methods: {
       set_default_parameters: function (dparams) {
         for (const key in dparams) {
-          this.$set(this.parameters, key, dparams[key]);
+          this.parameters[key] = dparams[key];
         }
       },
 
@@ -300,7 +299,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         });
       },
     },
-  });
+  }).mount("#app");
 
   //set default
   axios
