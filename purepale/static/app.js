@@ -120,7 +120,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
       },
       remove_lb: function (event) {
         const n = this.parameters.prompt.replace(/\r?\n/g, " ");
-        console.log(n);
         if (n != this.parameters.prompt) {
           this.parameters.prompt = n;
         }
