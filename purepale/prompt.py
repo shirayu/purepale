@@ -44,7 +44,7 @@ class Prompt:
 
     def __init__(self, *, original: str):
         self.original = original
-        self._parsed_str = self.original
+        self._parsed_str = self.original.replace("\n", " ")
         self.tileable = False
         self.enable_replace = False
         self.negative = ""

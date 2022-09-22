@@ -118,6 +118,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
         this.parameters.width = 64 * Math.round(this.parameters.width / 64);
         this.parameters.height = 64 * Math.round(this.parameters.height / 64);
       },
+      remove_lb: function (event) {
+        const n = this.parameters.prompt.replace(/\r?\n/g, " ");
+        console.log(n);
+        if (n != this.parameters.prompt) {
+          this.parameters.prompt = n;
+        }
+      },
       trigger: async function (event) {
         if (event.keyCode !== 13) {
           return;
