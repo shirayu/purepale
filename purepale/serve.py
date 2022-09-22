@@ -104,7 +104,7 @@ def get_app(opts):
     def api_generate(request: WebRequest):
         pipes = name2pipes.get(request.model)
         if pipes is None:
-            return HTTPException(
+            raise HTTPException(
                 status_code=400,
                 detail="Unsupported model name",
             )
