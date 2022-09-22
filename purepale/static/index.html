@@ -151,9 +151,10 @@
         </div>
 
         <div class="container">
-            <div class="row m-1" v-for="row_idx in Math.ceil(results.length / 4)" :key="row_idx">
-
-                <div class="col-3" v-for="(result, col_idx) in results.slice((row_idx - 1) * 4, row_idx * 4)">
+            <div class="row m-1" v-for="row_idx in Math.ceil(results.length / 4)+1" :key="row_idx">
+                <div class="col-3" v-for="j in (4 - results.length % 4)" v-if="row_idx == 1 && results.length % 4 >= 1">
+                </div>
+                <div class="col-3" v-for="(result, col_idx) in results.slice(Math.max(0, results.length % 4 + (row_idx -2) * 4 ) , results.length % 4  + (row_idx-1)* 4)">
                     <div>
                         <a v-if="result.path!==undefined" :href="result.path" target="_blank">
                             <img :src="result.path" class="img-fluid w-100">
@@ -178,17 +179,17 @@
 
                         <div v-if="result.error" class="alert alert-danger" role="alert" style="white-space: pre-wrap;">{{result.error}}</div>
                         <div v-if="finished">
-                            <button class="btn btn-secondary" @click="trigger_retry" :data-index="(row_idx -1)* 4 + col_idx" data-replace="use_as_ii">
-                                <span class="bi bi-recycle" :data-index="(row_idx -1)* 4 + col_idx" data-replace="use_as_ii"></span>
+                            <button class="btn btn-secondary" @click="trigger_retry" :data-index="Math.max(0,results.length%4+(row_idx-2)*4) + col_idx" data-replace="use_as_ii">
+                                <span class="bi bi-recycle" :data-index="Math.max(0,results.length%4+(row_idx-2)*4) + col_idx" data-replace="use_as_ii"></span>
                             </button>
-                            <button class="btn btn-secondary" @click="trigger_retry" :data-index="(row_idx -1)* 4 + col_idx" data-replace="no">
-                                <span class="bi bi-arrow-counterclockwise" :data-index="(row_idx -1)* 4 + col_idx" data-replace="no"></span>
+                            <button class="btn btn-secondary" @click="trigger_retry" :data-index="Math.max(0,results.length%4+(row_idx-2)*4) + col_idx" data-replace="no">
+                                <span class="bi bi-arrow-counterclockwise" :data-index="Math.max(0,results.length%4+(row_idx-2)*4) + col_idx" data-replace="no"></span>
                             </button>
-                            <button class="btn btn-secondary" @click="trigger_retry" :data-index="(row_idx -1)* 4 + col_idx" data-replace="plus_20_steps">
-                                <span class="bi bi-arrow-up-right" :data-index="(row_idx -1)* 4 + col_idx" data-replace="plus_20_steps"></span>
+                            <button class="btn btn-secondary" @click="trigger_retry" :data-index="Math.max(0,results.length%4+(row_idx-2)*4) + col_idx" data-replace="plus_20_steps">
+                                <span class="bi bi-arrow-up-right" :data-index="Math.max(0,results.length%4+(row_idx-2)*4) + col_idx" data-replace="plus_20_steps"></span>
                             </button>
-                            <button class="btn btn-secondary" @click="paste_output_json" :data-index="(row_idx -1)* 4 + col_idx" data-replace="plus_20_steps">
-                                <span class="bi bi-share" :data-index="(row_idx -1)* 4 + col_idx" data-replace="plus_20_steps"></span>
+                            <button class="btn btn-secondary" @click="paste_output_json" :data-index="Math.max(0,results.length%4+(row_idx-2)*4) + col_idx" data-replace="plus_20_steps">
+                                <span class="bi bi-share" :data-index="Math.max(0,results.length%4+(row_idx-2)*4) + col_idx" data-replace="plus_20_steps"></span>
                             </button>
                         </div>
                         <details>
@@ -197,9 +198,6 @@
                         </details>
                     </div>
                 </div>
-                <div class="col-3" v-for="j in (4 - results.length % 4)" v-if="row_idx * 4 > results.length">
-                </div>
-
             </div>
         </div>
 
