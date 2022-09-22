@@ -23,5 +23,5 @@ markdownlint:
 	find . -type d \( -name node_modules -o -name .venv \) -prune -o -type f -name '*.md' -print \
 	| xargs npx markdownlint --config ./.markdownlint.json
 
-lint_node: markdownlint pyright
-
+lint_node:
+	npm run test

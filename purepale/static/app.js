@@ -90,6 +90,19 @@ document.addEventListener("DOMContentLoaded", (event) => {
       use_image_mask: false,
       path_initial_image_mask: null,
     },
+
+    watch: {
+      use_image_mask: function (new_val) {
+        if (new_val) {
+          this.initialize_mask();
+        } else {
+          this.path_initial_image_mask = null;
+        }
+      },
+      path_initial_image: function () {
+        this.use_image_mask = false;
+      },
+    },
     methods: {
       set_default_parameters: function (dparams) {
         for (const key in dparams) {
@@ -285,19 +298,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
             draw(x, y);
           }
         });
-      },
-    },
-
-    watch: {
-      use_image_mask: function (new_val) {
-        if (new_val) {
-          this.initialize_mask();
-        } else {
-          this.path_initial_image_mask = null;
-        }
-      },
-      path_initial_image: function () {
-        this.use_image_mask = false;
       },
     },
   });

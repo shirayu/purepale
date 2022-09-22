@@ -107,7 +107,7 @@
                                 <input type="file" style="display:none" class="uploadFile" id="file_input_initial_image">
                             </span>
                         </label>
-                        <button v-if="path_initial_image" class="ms-1 btn btn-secondary" @click="action_img2prompt" v-if="ii_prompt===null">
+                        <button v-if="path_initial_image && ii_prompt===null" class="ms-1 btn btn-secondary" @click="action_img2prompt">
                             <span class="bi bi-card-text"></span>
                         </button>
                         <button v-if="path_initial_image" id="button_ii_clear" type="button" class="ms-1 btn btn-secondary" v-on:click="clear_path_initial_image()">
@@ -135,7 +135,7 @@
                         <input class="form-check-input" id="control_use_image_mask" type="checkbox" v-model="use_image_mask">
                         <label class="form-check-label" for="control_use_image_mask">Mask</label>
                     </div>
-                    <div v-if='use_image_mask' class="input-group">
+                    <div v-if="use_image_mask" class="input-group">
                         <span class="input-group-text">Px</span>
                         <input class="form-control" id="canvas_ii_mask_line_width" type="number" value="5" step="1" min="1" max="100">
                     </div>

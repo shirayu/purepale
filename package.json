@@ -1,16 +1,31 @@
 {
     "author": "",
     "description": "",
+    "devDependencies": {
+        "eslint": "^8.23.1",
+        "eslint-config-prettier": ">=8.3.0",
+        "eslint-plugin-prettier": ">=4.2.1",
+        "eslint-plugin-vue": "^9.5.1",
+        "htmlhint": "^1.1.3",
+        "js-beautify": ">=1.14.5",
+        "markdownlint-cli": ">=0.32.1",
+        "npm-run-all": ">=4.1.5",
+        "pyright": "^1.1.270",
+        "stylelint": ">=14.8.5",
+        "stylelint-config-recommended": ">=9.0.0"
+    },
     "license": "",
     "main": "",
     "name": "pyright-exec",
     "scripts": {
-        "pyright": "pyright"
+        "format:css": "find purepale -type f -name '*.css' | xargs -I {} bash -c 'npx css-beautify -q --end-with-newline {} | diff -q - {} '",
+        "format:html": "find purepale -name '*.html'| xargs -I {} bash -c 'npx html-beautify -q --end-with-newline {} | diff -q - {} '",
+        "pyright": "pyright",
+        "test": "run-s test:eslint test:html test:md test:css format:html format:css",
+        "test:css": "find purepale -type f -name '*.css' | xargs npx stylelint",
+        "test:eslint": "find purepale -type f -name '*.js' | xargs eslint",
+        "test:html": "htmlhint purepale",
+        "test:md": "npx markdownlint *.md"
     },
-    "version": "1.0.0",
-    "dependencies": {},
-    "devDependencies": {
-        "markdownlint-cli": "^0.32.1",
-        "pyright": "^1.1.270"
-    }
+    "version": "1.0.0"
 }
