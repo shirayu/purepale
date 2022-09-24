@@ -60,6 +60,7 @@ def get_app(opts):
             device=device,
             nosafety=opts.no_safety,
             slice_size=opts.slice_size,
+            local_files_only=opts.local,
         )
         if PurepaleFeatures.negative in opts.feature:
             _pipes.feature_egative_prompt = True
@@ -244,7 +245,11 @@ def get_opts() -> argparse.Namespace:
         help="0 means auto, Negative number means disabled. Large number saves VRAM but makes slow.",
         default=0,
     )
-
+    oparser.add_argument(
+        "--local",
+        action="store_true",
+        help="Do not access to HuggingFace",
+    )
     return oparser.parse_args()
 
 

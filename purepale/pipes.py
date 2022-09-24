@@ -34,6 +34,7 @@ class Pipes:
         device: str,
         nosafety: bool,
         slice_size: int,
+        local_files_only: bool,
     ):
         self.device: str = device
         self.feature_egative_prompt: bool = False
@@ -56,6 +57,7 @@ class Pipes:
             revision=model_config.revision,
             torch_dtype=torch.float16 if model_config.dtype == "fp16" else torch.float32,
             use_auth_token=True,
+            local_files_only=local_files_only,
             **kwargs,
         ).to(device)
         if slice_size >= 0:
