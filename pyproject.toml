@@ -46,3 +46,7 @@ line-length = 120
 profile = "black"
 line_length = 120
 
+
+[tool.poetry.scripts]
+purepale = "purepale.serve:main"
+

@@ -12,15 +12,11 @@ A simple web interface of image generations
 ## Setup
 
 ```bash
-# Install with poetry
-## https://python-poetry.org/docs/
-poetry install --no-dev
+pip install -U git+https://github.com/shirayu/whispering.git
 
-# Download torch for cuda
-mkdir -p wheel
-wget https://download.pytorch.org/whl/cu116/torch-1.12.1%2Bcu116-cp310-cp310-linux_x86_64.whl -P wheel
-wget http://download.pytorch.org/whl/cu116/torchvision-0.13.1%2Bcu116-cp310-cp310-linux_x86_64.whl -P wheel
-poetry run pip install wheels/*
+# If you use GPU, install proper torch and torchaudio
+# Example : torch for CUDA 11.6
+pip install -U torch torchvision --extra-index-url https://download.pytorch.org/whl/cu116
 ```
 
 ## Features
@@ -34,7 +30,7 @@ poetry run pip install wheels/*
 ## Run
 
 ```bash
-poetry run python -m purepale.serve -o ~/IMG --port 8000 --model CompVis/stable-diffusion-v1-4/fp16
+purepale -o ~/IMG --port 8000 --model CompVis/stable-diffusion-v1-4/fp16
 ```
 
 - ``--model``: You can use multiple models
@@ -43,7 +39,7 @@ poetry run python -m purepale.serve -o ~/IMG --port 8000 --model CompVis/stable-
 - ``--feature blip``: Enable BLIP (caption model)
 - ``--slice-size``: Enable attention slicing with given number
 
-Check full options with ``poetry run python -m purepale.serve -h``.
+Check full options with ``purepale -h``.
 
 ## Prompt options
 
