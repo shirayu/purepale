@@ -14,7 +14,7 @@ A simple web interface of image generations
 ```bash
 pip install -U git+https://github.com/shirayu/whispering.git
 
-# If you use GPU, install proper torch and torchaudio
+# If you use GPU, install proper torch and torchvision
 # Example : torch for CUDA 11.6
 pip install -U torch torchvision --extra-index-url https://download.pytorch.org/whl/cu116
 ```
