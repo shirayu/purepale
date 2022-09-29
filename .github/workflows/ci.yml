@@ -1,9 +1,12 @@
 ---
 name: CI
-"on": push
-env:
-  OUTPUT_DIR: output
-  OUTPUT_STAT: stat.json
+"on":
+  push:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
   ci:
