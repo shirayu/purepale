@@ -109,15 +109,15 @@ dev = ["accelerate (>=0.11.0)", "black (==22.8)", "datasets", "flake8 (>=3.8.3)"
 docs = ["hf-doc-builder (>=0.3.0)"]
 flax = ["flax (>=0.4.1)", "jax (>=0.2.8,!=0.3.2,<=0.3.6)", "jaxlib (>=0.1.65,<=0.3.6)"]
 quality = ["black (==22.8)", "flake8 (>=3.8.3)", "hf-doc-builder (>=0.3.0)", "isort (>=5.5.4)"]
-test = ["datasets", "onnxruntime", "pytest", "pytest-timeout", "pytest-xdist", "scipy", "torchvision", "transformers (>=4.21.0)"]
+test = ["accelerate (>=0.11.0)", "datasets", "onnxruntime", "pytest", "pytest-timeout", "pytest-xdist", "scipy", "torchvision", "transformers (>=4.21.0)"]
 torch = ["torch (>=1.4)"]
 training = ["accelerate (>=0.11.0)", "datasets", "modelcards (>=0.1.4)", "tensorboard"]
 
 [package.source]
 type = "git"
 url = "https://github.com/huggingface/diffusers"
-reference = "534512bedb70ab6074fd4399a3ce15afc4394a37"
-resolved_reference = "534512bedb70ab6074fd4399a3ce15afc4394a37"
+reference = "726aba089d12503249d824bbaf4070f47d0fe44d"
+resolved_reference = "726aba089d12503249d824bbaf4070f47d0fe44d"
 
 [[package]]
 name = "fairscale"
@@ -709,7 +709,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.12"
-content-hash = "b8707bc9ce01021fc406548918172525e443ceaca078c3201cb9bdd1f8f0f873"
+content-hash = "a724577b7378d217c1669da0ac36423d380fcd04d7f988b814d88f9ad9bd7269"
 
 [metadata.files]
 anyio = [
