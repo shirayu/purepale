@@ -235,8 +235,8 @@ def get_opts() -> argparse.Namespace:
         "-f",
         action="append",
         type=PurepaleFeatures,
-        help="Enable BILP",
-        default=[],
+        help="Enabled features",
+        default=[PurepaleFeatures.negative],
         choices=list(PurepaleFeatures),
     )
     oparser.add_argument(

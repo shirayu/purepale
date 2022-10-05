@@ -9,7 +9,7 @@ from pydantic import BaseModel, validator
 @enum.unique
 class PurepaleFeatures(enum.Enum):
     blip = "blip"
-    negative = "negative"  # currently this needs to modify diffusers
+    negative = "negative"
 
 
 class ModelConfig(BaseModel):
