@@ -116,8 +116,8 @@ training = ["accelerate (>=0.11.0)", "datasets", "modelcards (>=0.1.4)", "tensor
 [package.source]
 type = "git"
 url = "https://github.com/huggingface/diffusers"
-reference = "726aba089d12503249d824bbaf4070f47d0fe44d"
-resolved_reference = "726aba089d12503249d824bbaf4070f47d0fe44d"
+reference = "367a671a068749ac11c759531b2b1df498392e47"
+resolved_reference = "367a671a068749ac11c759531b2b1df498392e47"
 
 [[package]]
 name = "fairscale"
@@ -709,7 +709,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.12"
-content-hash = "a724577b7378d217c1669da0ac36423d380fcd04d7f988b814d88f9ad9bd7269"
+content-hash = "332cd138b93220f2fd11bd22e74ab70f2b43a203a65d675aeef390a00e71c4c5"
 
 [metadata.files]
 anyio = [
