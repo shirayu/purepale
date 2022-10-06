@@ -56,7 +56,6 @@ class Pipes:
             model_id,
             revision=model_config.revision,
             torch_dtype=torch.float16 if model_config.dtype == "fp16" else torch.float32,
-            use_auth_token=True,
             local_files_only=local_files_only,
             **kwargs,
         ).to(device)

@@ -23,7 +23,6 @@ def operation(models: List[str], weight: List[float], path_out: Path) -> None:
             pretrained_model_name_or_path=model_config.model_id,
             revision=model_config.revision,
             torch_dtype=torch.float16 if model_config.dtype == "fp16" else torch.float32,
-            use_auth_token=True,
         )
         if j == 0:
             out_pipe = pipe
