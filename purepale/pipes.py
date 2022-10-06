@@ -14,7 +14,6 @@ from diffusers import (
     StableDiffusionInpaintPipeline,
     StableDiffusionPipeline,
 )
-from torch.amp.autocast_mode import autocast
 
 from purepale.prompt import Prompt
 from purepale.schema import ModelConfig, PipesRequest, PrasedPrompt
@@ -151,13 +150,12 @@ class Pipes:
             kwargs["negative_prompt"] = prompt.negative
 
         with torch.no_grad():
-            with autocast(self.device):
-                image = model(
-                    used_prompt,
-                    num_inference_steps=request.parameters.num_inference_steps,
-                    guidance_scale=request.parameters.guidance_scale,
-                    eta=request.parameters.eta,
-                    generator=generator,
-                    **kwargs,
-                ).images[0]
+            image = model(
+                used_prompt,
+                num_inference_steps=request.parameters.num_inference_steps,
+                guidance_scale=request.parameters.guidance_scale,
+                eta=request.parameters.eta,
+                generator=generator,
+                **kwargs,
+            ).images[0]
         return image, parsed_prompt
