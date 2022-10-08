@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import enum
+from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, validator
@@ -26,15 +27,18 @@ class ModelConfig(BaseModel):
             assert v == "fp16" or v == "fp32", f"`{v}` is not acceptable"
             dtype: Literal["fp16", "fp32"] = v
             query = query[:r_at]
-        _items: List[str] = query.split("/")
+
+        model_id: str = query
         revision = None
-        if len(_items) == 1:
-            model_id: str = _items[0]
-        else:
-            assert 2 <= len(_items) <= 3
-            if len(_items) == 3:
-                revision = _items[2]
-            model_id = "/".join(_items[:2])
+        if not Path(query).exists():
+            _items: List[str] = query.split("/")
+            if len(_items) == 1:
+                model_id: str = _items[0]
+            else:
+                assert 2 <= len(_items) <= 3
+                if len(_items) == 3:
+                    revision = _items[2]
+                model_id = "/".join(_items[:2])
 
         return ModelConfig(
             model_id=model_id,

@@ -34,7 +34,7 @@ purepale -o ~/IMG --port 8000 --model CompVis/stable-diffusion-v1-4/fp16
 ```
 
 - ``--model``: You can use multiple models
-    - Format: ``org_name/model_name/revision@dtype`` (eg. ``naclbit/trinart_stable_diffusion_v2/diffusers-60k@fp16``)
+    - Format: ``model_path@dtype`` or ``org_name/model_name/revision@dtype`` (eg. ``naclbit/trinart_stable_diffusion_v2/diffusers-60k@fp16``, ``/path/to/model_dir@fp32``)
     - ``revision`` and ``dtype`` can be omitted
 - ``--feature blip``: Enable BLIP (caption model)
 - ``--slice-size``: Enable attention slicing with given number
