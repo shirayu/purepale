@@ -40,15 +40,6 @@ class Pipes:
 
         logger.info(f"Loading {model_config})")
         model_id: str = model_config.model_id
-        kwargs = {}
-        if not model_id.startswith("CompVis/"):
-            kwargs["scheduler"] = DDIMScheduler(
-                beta_start=0.00085,
-                beta_end=0.012,
-                beta_schedule="scaled_linear",
-                clip_sample=False,
-                set_alpha_to_one=False,
-            )
         logger.info(f"Finished loading of {model_config}")
 
         self.pipe_txt2img = StableDiffusionPipeline.from_pretrained(
@@ -56,7 +47,6 @@ class Pipes:
             revision=model_config.revision,
             torch_dtype=torch.float16 if model_config.dtype == "fp16" else torch.float32,
             local_files_only=local_files_only,
-            **kwargs,
         ).to(device)
         if slice_size >= 0:
             self.pipe_txt2img.enable_attention_slicing(
