@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from logging import getLogger
 from typing import Any, Dict, Tuple
 
@@ -8,12 +6,7 @@ import PIL.Image
 import PIL.ImageDraw
 import torch
 import torch.backends.cudnn
-from diffusers import (
-    DDIMScheduler,
-    StableDiffusionImg2ImgPipeline,
-    StableDiffusionInpaintPipeline,
-    StableDiffusionPipeline,
-)
+from diffusers import StableDiffusionImg2ImgPipeline, StableDiffusionInpaintPipeline, StableDiffusionPipeline
 
 from purepale.prompt import Prompt
 from purepale.schema import ModelConfig, PipesRequest, PrasedPrompt
