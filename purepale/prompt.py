@@ -84,8 +84,8 @@ class Prompt:
                             _negs.append(tmp[j])
                             del tmp[j]
 
-            self._parsed_str = " ".join(tmp)
-            self.negative = " ".join(_negs)
+            self._parsed_str = " ".join(tmp).strip()
+            self.negative = " ".join(_negs).strip()
 
         if REPALCE_COMMAND in self._parsed_str:
             self._parsed_str = self._parsed_str.replace(REPALCE_COMMAND, "")
