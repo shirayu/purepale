@@ -35,11 +35,16 @@ class Pipes:
         model_id: str = model_config.model_id
         logger.info(f"Finished loading of {model_config}")
 
+        kwargs = {}
+        if nosafety:
+            kwargs["safety_checker"] = None
+
         self.pipe_txt2img = StableDiffusionPipeline.from_pretrained(
             model_id,
             revision=model_config.revision,
             torch_dtype=torch.float16 if model_config.dtype == "fp16" else torch.float32,
             local_files_only=local_files_only,
+            **kwargs,
         ).to(device)
         if slice_size >= 0:
             self.pipe_txt2img.enable_attention_slicing(
@@ -78,12 +83,6 @@ class Pipes:
             feature_extractor=self.pipe_txt2img.feature_extractor,
             safety_checker=self.pipe_txt2img.safety_checker,
         ).to(device)
-
-        if nosafety:
-            del self.pipe_txt2img.safety_checker
-            self.pipe_txt2img.safety_checker = lambda images, **kwargs: (images, False)
-            self.pipe_img2img.safety_checker = lambda images, **kwargs: (images, False)
-            self.pipe_masked_img2img.safety_checker = lambda images, **kwargs: (images, False)
 
     def generate(
         self,
