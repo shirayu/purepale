@@ -6,7 +6,7 @@ authors = ["Yuta Hayashibe <yuta@hayashibe.jp>"]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
-diffusers = {git="https://github.com/huggingface/diffusers", rev="93a81a3f5a7ee9eb1ee520010bec86e64ffc901e"}
+diffusers = {git="https://github.com/huggingface/diffusers", rev="32bf4fdc4386809c870528cb261028baae012d27"}
 transformers = "^4.21.1"
 scipy = "^1.9.0"
 uvicorn = "^0.18.2"
