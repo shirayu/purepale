@@ -6,7 +6,13 @@ import PIL.Image
 import PIL.ImageDraw
 import torch
 import torch.backends.cudnn
-from diffusers import StableDiffusionImg2ImgPipeline, StableDiffusionInpaintPipeline, StableDiffusionPipeline
+from diffusers import (
+    EulerDiscreteScheduler,
+    StableDiffusionImg2ImgPipeline,
+    StableDiffusionInpaintPipeline,
+    StableDiffusionPipeline,
+)
+from diffusers.utils.logging import enable_default_handler
 
 from purepale.prompt import Prompt
 from purepale.schema import ModelConfig, PipesRequest, PrasedPrompt
@@ -39,11 +45,16 @@ class Pipes:
         if nosafety:
             kwargs["safety_checker"] = None
 
+        euler_scheduler = EulerDiscreteScheduler.from_config(
+            "runwayml/stable-diffusion-v1-5",
+            subfolder="scheduler",
+        )
         self.pipe_txt2img = StableDiffusionPipeline.from_pretrained(
             model_id,
             revision=model_config.revision,
             torch_dtype=torch.float16 if model_config.dtype == "fp16" else torch.float32,
             local_files_only=local_files_only,
+            scheduler=euler_scheduler,
             **kwargs,
         ).to(device)
         if slice_size >= 0:
