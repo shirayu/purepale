@@ -12,7 +12,6 @@ from diffusers import (
     StableDiffusionInpaintPipeline,
     StableDiffusionPipeline,
 )
-from diffusers.utils.logging import enable_default_handler
 
 from purepale.prompt import Prompt
 from purepale.schema import ModelConfig, PipesRequest, PrasedPrompt
