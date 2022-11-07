@@ -149,8 +149,8 @@ training = ["accelerate (>=0.11.0)", "datasets", "modelcards (>=0.1.4)", "tensor
 [package.source]
 type = "git"
 url = "https://github.com/huggingface/diffusers"
-reference = "v0.7.0"
-resolved_reference = "bde4880c9cceada20b387d3110061c65249dabcc"
+reference = "v0.7.2"
+resolved_reference = "91592ed2a88f93b3b29f11020be351dd1f9d21ef"
 
 [[package]]
 name = "fairscale"
@@ -771,7 +771,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.12"
-content-hash = "e271f679fdc64b6fb7c81fec05b9f6a2208a6c0a3f67d10b844a84ee520b58be"
+content-hash = "d9e57b9fa74941a1d10fbaceaf2da4debadfa753887e430801e016e858cbce1a"
 
 [metadata.files]
 accelerate = [
