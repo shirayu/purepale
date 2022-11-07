@@ -6,7 +6,7 @@ authors = ["Yuta Hayashibe <yuta@hayashibe.jp>"]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
-diffusers = {git="https://github.com/huggingface/diffusers", rev="32bf4fdc4386809c870528cb261028baae012d27"}
+diffusers = {git="https://github.com/huggingface/diffusers", rev="v0.7.0"}
 transformers = "^4.21.1"
 scipy = "^1.9.0"
 uvicorn = "^0.18.2"
@@ -18,6 +18,7 @@ timm = "^0.6.7" # For BLIP
 fairscale = "^0.4.8" # For BLIP
 torch = "^1.12.1"
 torchvision = "^0.13.1"
+accelerate = "^0.13.2"
 
 [tool.poetry.dev-dependencies]
 coverage = ">=5.3"
