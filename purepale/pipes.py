@@ -44,7 +44,7 @@ class Pipes:
         if nosafety:
             kwargs["safety_checker"] = None
 
-        euler_scheduler = EulerDiscreteScheduler.from_config(
+        euler_scheduler = EulerDiscreteScheduler.from_pretrained(
             "runwayml/stable-diffusion-v1-5",
             subfolder="scheduler",
         )
