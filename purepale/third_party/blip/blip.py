@@ -41,7 +41,6 @@ class BLIP_Base(nn.Module):
         self.text_encoder = BertModel(config=med_config, add_pooling_layer=False)
 
     def forward(self, image, caption, mode):
-
         assert mode in ["image", "text", "multimodal"], "mode parameter must be image, text, or multimodal"
         text = self.tokenizer(caption, return_tensors="pt").to(image.device)
 
@@ -101,7 +100,6 @@ class BLIP_Decoder(nn.Module):
         self.prompt_length = len(self.tokenizer(self.prompt).input_ids) - 1
 
     def forward(self, image, caption):
-
         image_embeds = self.visual_encoder(image)
         image_atts = torch.ones(image_embeds.size()[:-1], dtype=torch.long).to(image.device)
 
@@ -201,7 +199,6 @@ def init_tokenizer():
 
 
 def create_vit(vit, image_size, use_grad_checkpointing=False, ckpt_layer=0, drop_path_rate=0):
-
     assert vit in ["base", "large"], "vit parameter must be base or large"
     if vit == "base":
         vision_width = 768

@@ -30,7 +30,7 @@ def operation(models: List[str], weight: List[float], path_out: Path) -> None:
         assert out_pipe is not None
         for _m in [pipe.unet, pipe.vae]:
             _sd = _m.state_dict()
-            for (target, v) in _m.named_parameters():
+            for target, v in _m.named_parameters():
                 if j == 0:
                     _sd[target] = v * weight[j] / 1.0
                 else:

@@ -28,7 +28,10 @@ class Prompt:
 
     def get_parsed(self, *, used_prompt: str, tokenizer) -> PrasedPrompt:
         tokens = tokenizer.tokenize(used_prompt)
-        used_prompt_tokens, used_prompt_truncated, = (
+        (
+            used_prompt_tokens,
+            used_prompt_truncated,
+        ) = (
             tokens,
             tokens[tokenizer.model_max_length :],
         )
