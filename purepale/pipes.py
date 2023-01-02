@@ -9,7 +9,7 @@ import torch.backends.cudnn
 from diffusers import (
     EulerDiscreteScheduler,
     StableDiffusionImg2ImgPipeline,
-    StableDiffusionInpaintPipeline,
+    StableDiffusionInpaintPipelineLegacy,
     StableDiffusionPipeline,
 )
 
@@ -79,7 +79,7 @@ class Pipes:
             safety_checker=self.pipe_txt2img.safety_checker,
         ).to(device)
 
-        self.pipe_masked_img2img = StableDiffusionInpaintPipeline(
+        self.pipe_masked_img2img = StableDiffusionInpaintPipelineLegacy(
             vae=self.pipe_txt2img.vae,
             text_encoder=self.pipe_txt2img.text_encoder,
             tokenizer=self.pipe_txt2img.tokenizer,
@@ -100,12 +100,12 @@ class Pipes:
         model = self.pipe_txt2img
         if request.initial_image_mask is not None:
             model = self.pipe_masked_img2img
-            kwargs["init_image"] = request.initial_image  # no preprocess
+            kwargs["image"] = request.initial_image  # no preprocess
             kwargs["mask_image"] = request.initial_image_mask
             kwargs["strength"] = request.parameters.strength
         elif request.initial_image is not None:
             model = self.pipe_img2img
-            kwargs["init_image"] = request.initial_image
+            kwargs["image"] = request.initial_image
             kwargs["strength"] = request.parameters.strength
         else:
             kwargs["height"] = request.parameters.height
