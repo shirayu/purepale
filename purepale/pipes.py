@@ -44,16 +44,11 @@ class Pipes:
         if nosafety:
             kwargs["safety_checker"] = None
 
-        euler_scheduler = EulerDiscreteScheduler.from_pretrained(
-            "runwayml/stable-diffusion-v1-5",
-            subfolder="scheduler",
-        )
         self.pipe_txt2img = StableDiffusionPipeline.from_pretrained(
             model_id,
             revision=model_config.revision,
             torch_dtype=torch.float16 if model_config.dtype == "fp16" else torch.float32,
             local_files_only=local_files_only,
-            scheduler=euler_scheduler,
             **kwargs,
         ).to(device)
         if slice_size >= 0:
