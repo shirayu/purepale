@@ -6,12 +6,7 @@ import PIL.Image
 import PIL.ImageDraw
 import torch
 import torch.backends.cudnn
-from diffusers import (
-    EulerDiscreteScheduler,
-    StableDiffusionImg2ImgPipeline,
-    StableDiffusionInpaintPipelineLegacy,
-    StableDiffusionPipeline,
-)
+from diffusers import StableDiffusionImg2ImgPipeline, StableDiffusionInpaintPipelineLegacy, StableDiffusionPipeline
 
 from purepale.prompt import Prompt
 from purepale.schema import ModelConfig, PipesRequest, PrasedPrompt
