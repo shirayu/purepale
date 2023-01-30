@@ -10,7 +10,7 @@
         "js-beautify": ">=1.14.7",
         "markdownlint-cli": ">=0.33.0",
         "npm-run-all": ">=4.1.5",
-        "pyright": "^1.1.290",
+        "pyright": "^1.1.291",
         "stylelint": ">=14.16.0",
         "stylelint-config-recommended": ">=9.0.0"
     },
