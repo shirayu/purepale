@@ -48,7 +48,7 @@ Check full options with ``purepale -h``.
 
 ## Documents
 
-- [Tips to run on Linux in Windows WSL2](docs/wsl2.md)
+- [Tips to run on Linux in Windows WSL2](https://gist.github.com/shirayu/8f54a16ce0de315908f1fdb419479aa8)
 - [Convert models](docs/convert.md)
 
 ## License
